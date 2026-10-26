@@ -28,6 +28,7 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
   const [messageInput, setMessageInput] = useState('');
   const [isSimulatingPing, setIsSimulatingPing] = useState(false);
   const [pingSuccessMessage, setPingSuccessMessage] = useState<string | null>(null);
+  const [attachmentNotice, setAttachmentNotice] = useState<string | null>(null);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -400,8 +401,8 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
                 <span className="font-['JetBrains_Mono'] text-[11px] text-[#66736F] uppercase tracking-wider font-semibold">
                   Journal d'intervention & Traçabilité
                 </span>
-                <span className="font-['JetBrains_Mono'] text-[11px] text-[#66736F]">
-                  Horodatage sécurisé SHA-256
+                <span className="font-['JetBrains_Mono'] text-[11px] text-[#146C48] font-medium">
+                  {ticket.timeline.length} événements enregistrés
                 </span>
               </div>
 
@@ -411,7 +412,7 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
                   if (event.type === 'take_charge') dotColor = 'bg-[#146C48]';
                   if (event.type === 'message') dotColor = 'bg-[#173B3F]';
                   if (event.type === 'resolution') dotColor = 'bg-[#146C48]';
-                  if (event.type === 'telemetry') dotColor = 'bg-[#BA1A1A]';
+                  if (event.type === 'reopen') dotColor = 'bg-[#BA1A1A]';
 
                   return (
                     <div key={event.id || idx} className="relative flex flex-col gap-0.5 text-xs">
@@ -423,11 +424,6 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
                         <span className="font-semibold text-[#151D19]">
                           {event.title}
                         </span>
-                        {event.hash && (
-                          <span className="font-['JetBrains_Mono'] text-[10px] text-[#66736F] ml-auto">
-                            {event.hash}
-                          </span>
-                        )}
                       </div>
                       <p className="text-[#66736F] text-xs leading-relaxed">
                         {event.description}
@@ -465,12 +461,20 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
                           size: `${(file.size / 1024).toFixed(1)} KB`,
                           uploadedAt: "À l'instant",
                         });
-                        alert(`Fichier "${file.name}" attaché au dossier.`);
+                        setAttachmentNotice(`Fichier "${file.name}" attaché au signalement.`);
+                        setTimeout(() => setAttachmentNotice(null), 3000);
                       }
                     }}
                   />
                 </label>
               </div>
+
+              {attachmentNotice && (
+                <div className="p-2 bg-[#A2F4C6]/30 border border-[#A2F4C6] rounded text-xs text-[#002112] flex items-center gap-1.5 font-['DM_Sans']">
+                  <span className="material-symbols-outlined text-sm text-[#146C48]">check_circle</span>
+                  <span>{attachmentNotice}</span>
+                </div>
+              )}
 
               {ticket.attachments.length === 0 ? (
                 <div className="p-6 text-center border border-dashed border-[#E5E0D8] rounded-lg text-xs text-[#66736F]">
@@ -498,7 +502,11 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
                       </div>
 
                       <button
-                        onClick={() => alert(`Téléchargement sécurisé certifié de "${att.name}" démarré.`)}
+                        type="button"
+                        onClick={() => {
+                          setAttachmentNotice(`Téléchargement de "${att.name}" démarré.`);
+                          setTimeout(() => setAttachmentNotice(null), 2500);
+                        }}
                         className="px-2.5 py-1 rounded bg-[#EDF6EF] hover:bg-[#DCE5DE] text-[#002529] font-medium text-xs flex items-center gap-1 shrink-0 ml-2"
                       >
                         <span className="material-symbols-outlined text-sm">download</span>
@@ -519,7 +527,7 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
                   Fil de discussion et observations ({ticket.messages.length})
                 </span>
                 <span className="font-['JetBrains_Mono'] text-[10px] text-[#146C48] bg-[#EDF6EF] px-2 py-0.5 rounded font-semibold">
-                  Chiffrement E2E vérifié
+                  Canal d'échange actif
                 </span>
               </div>
 
@@ -589,12 +597,12 @@ export const TicketDetailPanel: React.FC<TicketDetailPanelProps> = ({
                       : 'text-[#66736F] hover:text-[#151D19]'
                   }`}
                 >
-                  Note interne confidentielle (DSI)
+                  Note interne confidentielle
                 </button>
               </div>
 
-              <span className="font-['JetBrains_Mono'] text-[10px] text-[#66736F] hidden sm:inline">
-                Cryptage E2E activé
+              <span className="font-['JetBrains_Mono'] text-[10px] text-[#146C48] hidden sm:inline">
+                Échange sécurisé de service
               </span>
             </div>
 

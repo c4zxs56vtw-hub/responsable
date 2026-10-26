@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Ticket, TicketCategory, TicketPriority, ConfidentialityLevel, ResponsibleUser } from '../types/ticket';
-import { generateAuditHash } from '../utils/ticket-logic';
 
 interface NewTicketModalProps {
   isOpen: boolean;
@@ -65,7 +64,6 @@ export const NewTicketModal: React.FC<NewTicketModalProps> = ({
           description: `Créé en guichet / astreinte par ${currentUser.name} (${currentUser.role}).`,
           author: currentUser.name,
           type: 'creation',
-          hash: generateAuditHash(),
         },
       ],
       messages: [],

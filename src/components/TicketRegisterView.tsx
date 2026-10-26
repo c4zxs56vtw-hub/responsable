@@ -18,46 +18,71 @@ export const TicketRegisterView: React.FC<TicketRegisterViewProps> = ({
 }) => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [priorityFilter, setPriorityFilter] = useState('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredTickets = tickets.filter((t) => {
+  // Department-scoped
+  const deptTickets = tickets.filter((t) => t.targetDepartment === currentUser.department);
+
+  const filteredTickets = deptTickets.filter((t) => {
     if (statusFilter !== 'ALL' && t.status !== statusFilter) return false;
     if (priorityFilter !== 'ALL' && t.priority !== priorityFilter) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchRef = t.reference.toLowerCase().includes(q);
+      const matchTitle = t.title.toLowerCase().includes(q);
+      const matchCat = t.category.toLowerCase().includes(q);
+      const matchReq = t.requesterName?.toLowerCase().includes(q) ?? false;
+      if (!matchRef && !matchTitle && !matchCat && !matchReq) return false;
+    }
     return true;
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 font-['DM_Sans']">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="font-['JetBrains_Mono'] text-xs font-semibold text-[#146C48] uppercase tracking-wider">
-            Supervision Centralisée
+            Vue Opérationnelle
           </span>
           <h2 className="font-['DM_Serif_Display'] text-2xl text-[#002529] mt-1">
-            Registre Exhaustif & Matrice de Triage du Pôle
+            Signalements reçus
           </h2>
           <p className="text-xs text-[#66736F] mt-1">
-            {filteredTickets.length} signalements répertoriés pour le {currentUser.department}.
+            {filteredTickets.length} signalement{filteredTickets.length > 1 ? 's' : ''} enregistré{filteredTickets.length > 1 ? 's' : ''} pour le {currentUser.department}.
           </p>
         </div>
 
         <button
           onClick={onBackToDashboard}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-[#E5E0D8] text-xs font-semibold text-[#151D19] hover:bg-[#F3FBF5] self-start sm:self-auto"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-white border border-[#E5E0D8] text-xs font-semibold text-[#151D19] hover:bg-[#F3FBF5] self-start sm:self-auto shadow-2xs transition-colors"
         >
           <span className="material-symbols-outlined text-sm">arrow_back</span>
           <span>Retour au Tableau de bord</span>
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-lg border border-[#E5E0D8] text-xs">
+      {/* Filters & Search */}
+      <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded-lg border border-[#E5E0D8] text-xs shadow-2xs">
+        <div className="relative flex-1 min-w-[200px]">
+          <span className="material-symbols-outlined absolute left-2.5 top-2 text-base text-[#66736F]">
+            search
+          </span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher par référence, titre, collaborateur..."
+            className="w-full pl-8 pr-3 py-1.5 bg-[#F7F5F0] border border-[#E5E0D8] rounded text-xs text-[#151D19] focus:outline-none focus:border-[#173B3F]"
+          />
+        </div>
+
         <div className="flex items-center gap-2">
           <span className="font-semibold text-[#414849]">Statut :</span>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-1.5 rounded border border-[#E5E0D8] bg-[#F7F5F0] text-xs"
+            className="p-1.5 rounded border border-[#E5E0D8] bg-[#F7F5F0] text-xs font-medium"
           >
             <option value="ALL">Tous les statuts</option>
             <option value="EN_ATTENTE">À traiter / En attente</option>
@@ -65,6 +90,7 @@ export const TicketRegisterView: React.FC<TicketRegisterViewProps> = ({
             <option value="ATTENTE_VALIDATION">En attente validation</option>
             <option value="RESOLU">Résolu</option>
             <option value="CLOTURE">Clôturé</option>
+            <option value="ROUVERT">Rouvert</option>
           </select>
         </div>
 
@@ -73,7 +99,7 @@ export const TicketRegisterView: React.FC<TicketRegisterViewProps> = ({
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="p-1.5 rounded border border-[#E5E0D8] bg-[#F7F5F0] text-xs"
+            className="p-1.5 rounded border border-[#E5E0D8] bg-[#F7F5F0] text-xs font-medium"
           >
             <option value="ALL">Toutes les priorités</option>
             <option value="CRITIQUE">Critique</option>
@@ -89,97 +115,112 @@ export const TicketRegisterView: React.FC<TicketRegisterViewProps> = ({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#EDF6EF] text-[#414849] border-b border-[#E5E0D8] font-['DM_Sans'] text-[11px] uppercase tracking-wider">
+              <tr className="bg-[#EDF6EF] text-[#414849] border-b border-[#E5E0D8] text-[11px] uppercase tracking-wider font-semibold">
                 <th className="py-2.5 px-4">Référence</th>
-                <th className="py-2.5 px-4">Intitulé de l'incident</th>
-                <th className="py-2.5 px-4">Demandeur / Bureau</th>
+                <th className="py-2.5 px-4">Intitulé du signalement</th>
+                <th className="py-2.5 px-4">Demandeur / Emplacement</th>
                 <th className="py-2.5 px-4">Priorité & SLA</th>
                 <th className="py-2.5 px-4">Statut</th>
-                <th className="py-2.5 px-4">Responsable</th>
+                <th className="py-2.5 px-4">Assignation</th>
                 <th className="py-2.5 px-4 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E0D8]">
-              {filteredTickets.map((ticket) => (
-                <tr
-                  key={ticket.id}
-                  onClick={() => onSelectTicket(ticket)}
-                  className="hover:bg-[#F7F5F0] cursor-pointer transition-colors"
-                >
-                  <td className="py-3 px-4 font-['JetBrains_Mono'] font-bold text-[#002529]">
-                    {ticket.reference}
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="font-semibold text-[#151D19] block max-w-sm truncate">
-                      {ticket.title}
-                    </span>
-                    <span className="text-[11px] text-[#66736F]">{ticket.category}</span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="font-medium text-[#151D19] block">
-                      {ticket.requesterName || 'Anonymisé'}
-                    </span>
-                    <span className="text-[11px] text-[#66736F] truncate max-w-xs block">
-                      {ticket.requesterLocation || ticket.requesterDepartment}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`font-['JetBrains_Mono'] text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
-                        ticket.priority === 'CRITIQUE'
-                          ? 'bg-[#FFDAD6] text-[#93000A]'
-                          : ticket.priority === 'ELEVEE'
-                          ? 'bg-[#FFDCBF] text-[#522D00]'
-                          : 'bg-[#EDF6EF] text-[#414849]'
-                      }`}
-                    >
-                      {ticket.priority}
-                    </span>
-                    <span className="text-[10px] text-[#66736F] block mt-0.5">
-                      {ticket.slaInfo}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                        ticket.status === 'RESOLU'
-                          ? 'bg-[#A2F4C6] text-[#002112]'
-                          : ticket.status === 'CLOTURE'
-                          ? 'bg-[#E7F0E9] text-[#66736F]'
-                          : ticket.status === 'DIAGNOSTIC_EN_COURS'
-                          ? 'bg-[#EDF6EF] text-[#002529]'
-                          : 'bg-[#DCE5DE] text-[#414849]'
-                      }`}
-                    >
-                      {ticket.status.replace(/_/g, ' ')}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-['JetBrains_Mono'] text-[11px]">
-                    {ticket.assignedTo ? (
-                      <span className="text-[#146C48] font-semibold">{ticket.assignedTo}</span>
-                    ) : (
-                      <span className="text-[#66736F]">Non assigné</span>
-                    )}
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    {!ticket.assignedTo ? (
-                      <button
-                        onClick={(e) => onTakeCharge(ticket, e)}
-                        className="px-2 py-1 rounded bg-[#173B3F] text-white font-semibold text-[11px] hover:bg-[#002529]"
-                      >
-                        Prendre en charge
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => onSelectTicket(ticket)}
-                        className="px-2 py-1 rounded bg-[#EDF6EF] text-[#002529] font-medium text-[11px] hover:bg-[#DCE5DE]"
-                      >
-                        Ouvrir
-                      </button>
-                    )}
+              {filteredTickets.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-[#66736F]">
+                    Aucun signalement ne correspond à vos filtres.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredTickets.map((ticket) => (
+                  <tr
+                    key={ticket.id}
+                    onClick={() => onSelectTicket(ticket)}
+                    className="hover:bg-[#F7F5F0] cursor-pointer transition-colors"
+                  >
+                    <td className="py-3 px-4 font-['JetBrains_Mono'] font-bold text-[#002529]">
+                      {ticket.reference}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="font-semibold text-[#151D19] block max-w-sm truncate">
+                        {ticket.title}
+                      </span>
+                      <span className="text-[11px] text-[#66736F]">{ticket.category}</span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="font-medium text-[#151D19] block">
+                        {ticket.isAnonymous ? 'Anonyme' : (ticket.requesterName || 'Collaborateur')}
+                      </span>
+                      <span className="text-[11px] text-[#66736F] truncate max-w-xs block">
+                        {ticket.requesterLocation || ticket.requesterDepartment || 'Non précisé'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`font-['JetBrains_Mono'] text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                          ticket.priority === 'CRITIQUE'
+                            ? 'bg-[#FFDAD6] text-[#93000A]'
+                            : ticket.priority === 'ELEVEE'
+                            ? 'bg-[#FFDCBF] text-[#522D00]'
+                            : 'bg-[#EDF6EF] text-[#414849]'
+                        }`}
+                      >
+                        {ticket.priority}
+                      </span>
+                      <span className="text-[10px] text-[#66736F] block mt-0.5">
+                        {ticket.slaInfo}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          ticket.status === 'RESOLU'
+                            ? 'bg-[#A2F4C6] text-[#002112]'
+                            : ticket.status === 'CLOTURE'
+                            ? 'bg-[#E7F0E9] text-[#414849]'
+                            : ticket.status === 'ROUVERT'
+                            ? 'bg-[#FFDAD6] text-[#93000A]'
+                            : ticket.status === 'DIAGNOSTIC_EN_COURS'
+                            ? 'bg-[#EDF6EF] text-[#002529]'
+                            : 'bg-[#FFDAD6] text-[#93000A]'
+                        }`}
+                      >
+                        {ticket.status === 'DIAGNOSTIC_EN_COURS'
+                          ? 'En cours'
+                          : ticket.status === 'ATTENTE_VALIDATION'
+                          ? 'Validation'
+                          : ticket.status === 'EN_ATTENTE'
+                          ? 'À traiter'
+                          : ticket.status === 'RESOLU'
+                          ? 'Résolu'
+                          : ticket.status === 'CLOTURE'
+                          ? 'Clôturé'
+                          : 'Rouvert'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className="text-[#151D19] font-medium block">
+                        {ticket.assignedTo || 'Non assigné'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      {ticket.status === 'EN_ATTENTE' || ticket.status === 'ROUVERT' ? (
+                        <button
+                          onClick={(e) => onTakeCharge(ticket, e)}
+                          className="px-2.5 py-1 rounded bg-[#173B3F] hover:bg-[#002529] text-white text-xs font-semibold shadow-2xs"
+                        >
+                          Prendre en charge
+                        </button>
+                      ) : (
+                        <span className="text-[#66736F] text-[11px] font-semibold">
+                          Consulter →
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

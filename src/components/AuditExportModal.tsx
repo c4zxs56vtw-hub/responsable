@@ -14,22 +14,46 @@ export const AuditExportModal: React.FC<AuditExportModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const totalAuditEvents = tickets.reduce((acc, t) => acc + t.timeline.length, 0);
+  const totalEvents = tickets.reduce((acc, t) => acc + t.timeline.length, 0);
+
+  const handleExportCSV = () => {
+    const headers = ['Date', 'Ticket', 'Intitule', 'Action', 'Auteur', 'Description'];
+    const rows = tickets.flatMap((t) =>
+      t.timeline.map((ev) => [
+        `"${ev.time} (${new Date(ev.timestamp).toLocaleDateString('fr-FR')})"`,
+        `"${t.reference}"`,
+        `"${t.title.replace(/"/g, '""')}"`,
+        `"${ev.title.replace(/"/g, '""')}"`,
+        `"${ev.author.replace(/"/g, '""')}"`,
+        `"${ev.description.replace(/"/g, '""')}"`,
+      ])
+    );
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `journal_activite_service_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#002529]/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-[#002529]/60 backdrop-blur-xs flex items-center justify-center p-4 font-['DM_Sans']">
       <div className="bg-white rounded-lg border border-[#E5E0D8] shadow-2xl max-w-2xl w-full p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between border-b border-[#E5E0D8] pb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#EDF6EF] text-[#002529] flex items-center justify-center">
-              <span className="material-symbols-outlined text-2xl">verified_user</span>
+              <span className="material-symbols-outlined text-2xl text-[#173B3F]">history_edu</span>
             </div>
             <div>
               <span className="font-['JetBrains_Mono'] text-[11px] text-[#146C48] font-bold">
-                CERTIFICAT DE JOURNALISATION AUDITABLE
+                RAPPORT D'ACTIVITÉ & TRAÇABILITÉ
               </span>
               <h3 className="font-['DM_Serif_Display'] text-xl text-[#002529]">
-                Registre de consignation & conformité RGPD/CNIL
+                Synthèse des interventions du service
               </h3>
             </div>
           </div>
@@ -40,24 +64,24 @@ export const AuditExportModal: React.FC<AuditExportModalProps> = ({
 
         <div className="p-4 bg-[#F7F5F0] rounded border border-[#E5E0D8] flex flex-col gap-2 text-xs">
           <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
-            <span className="text-[#66736F]">Empreinte cryptographique globale :</span>
-            <span className="font-['JetBrains_Mono'] font-bold text-[#002529]">
-              #8F9A-24D1-IT (SHA-256)
+            <span className="text-[#66736F]">Périmètre :</span>
+            <span className="font-semibold text-[#002529]">
+              Tous les signalements et actes enregistrés
             </span>
           </div>
           <div className="flex items-center justify-between border-b border-[#E5E0D8] pb-2">
-            <span className="text-[#66736F]">Total des actes et interventions tracés :</span>
-            <span className="font-semibold text-[#146C48]">{totalAuditEvents} événements certifiés</span>
+            <span className="text-[#66736F]">Total des interventions journalisées :</span>
+            <span className="font-semibold text-[#146C48]">{totalEvents} actes tracés</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-[#66736F]">Opposabilité légale :</span>
-            <span className="font-semibold text-[#151D19]">Conforme Loi Travail, RGPD Art. 30 & Charte d'Éthique</span>
+            <span className="text-[#66736F]">Finalité :</span>
+            <span className="font-semibold text-[#151D19]">Revue de performance, bilan de service et CSE</span>
           </div>
         </div>
 
         <div className="space-y-2">
           <span className="font-['JetBrains_Mono'] text-[11px] text-[#66736F] uppercase tracking-wider font-semibold block">
-            Extrait des derniers scellements du pôle
+            Dernières actions enregistrées
           </span>
           <div className="border border-[#E5E0D8] rounded max-h-48 overflow-y-auto text-xs divide-y divide-[#E5E0D8]">
             {tickets.flatMap((t) => t.timeline).slice(0, 6).map((ev, i) => (
@@ -66,8 +90,8 @@ export const AuditExportModal: React.FC<AuditExportModalProps> = ({
                   <span className="font-semibold text-[#151D19]">{ev.title}</span>
                   <span className="text-[10px] text-[#66736F]">Auteur : {ev.author} • {ev.time}</span>
                 </div>
-                <span className="font-['JetBrains_Mono'] text-[10px] bg-[#EDF6EF] px-1.5 py-0.5 rounded text-[#002529]">
-                  {ev.hash || '#5C22-1030-IT'}
+                <span className="text-[10px] text-[#146C48] font-medium">
+                  Enregistré
                 </span>
               </div>
             ))}
@@ -82,13 +106,11 @@ export const AuditExportModal: React.FC<AuditExportModalProps> = ({
             Fermer
           </button>
           <button
-            onClick={() => {
-              window.print();
-            }}
-            className="px-4 py-2 rounded bg-[#002529] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm hover:bg-[#173B3F]"
+            onClick={handleExportCSV}
+            className="px-4 py-2 rounded bg-[#173B3F] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm hover:bg-[#002529]"
           >
-            <span className="material-symbols-outlined text-sm">print</span>
-            <span>Imprimer / Télécharger l'export PDF scellé</span>
+            <span className="material-symbols-outlined text-sm">download</span>
+            <span>Télécharger le journal (CSV)</span>
           </button>
         </div>
       </div>

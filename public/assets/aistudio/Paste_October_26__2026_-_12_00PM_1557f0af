@@ -1,0 +1,1087 @@
+# EMPLOYEECARE — CONCEPTION ET DÉVELOPPEMENT DE L'ESPACE ADMINISTRATEUR
+
+## 1. TON RÔLE
+
+Agis comme un Senior Product Designer, Senior React Developer et Software Architect spécialisé dans les applications de gestion d'entreprise.
+
+Nous développons une application web appelée **EmployeeCare — Votre espace de dialogue**.
+
+Deux espaces ont déjà été conçus :
+
+* L'espace Employé.
+* L'espace Responsable.
+
+Nous passons maintenant à la conception et au développement du troisième espace :
+
+**L'ESPACE ADMINISTRATEUR.**
+
+Ta mission consiste à créer une interface d'administration moderne, professionnelle, intuitive et entièrement cohérente avec l'identité visuelle d'EmployeeCare.
+
+L'administrateur doit pouvoir gérer les comptes des employés, les responsables chargés de résoudre les problèmes, les départements et le fonctionnement général des signalements.
+
+IMPORTANT : ne reconstruis pas les interfaces Employé et Responsable. Nous travaillons uniquement sur l'espace Administrateur.
+
+---
+
+# 2. CONTEXTE ET FONCTIONNEMENT D'EMPLOYEECARE
+
+EmployeeCare est une application web permettant aux employés d'une entreprise de signaler leurs problèmes professionnels.
+
+Ces problèmes peuvent concerner :
+
+* L'informatique.
+* Les ressources humaines.
+* Les équipements et le matériel.
+* Les conditions de travail.
+* Les conflits professionnels.
+* Les difficultés administratives.
+* Les suggestions d'amélioration.
+
+Lorsqu'un employé signale un problème, celui-ci doit être transmis au service compétent.
+
+Un responsable habilité prend ensuite en charge le signalement et assure son traitement jusqu'à la résolution.
+
+L'application possède trois rôles principaux :
+
+**EMPLOYÉ**
+
+Il crée des signalements et suit leur évolution.
+
+**RESPONSABLE**
+
+Il reçoit et traite les signalements relevant de ses responsabilités.
+
+**ADMINISTRATEUR**
+
+Il gère les comptes, les responsables, les départements, les catégories et supervise le fonctionnement général de l'application.
+
+---
+
+# 3. RÈGLE FONDAMENTALE : AUCUNE INSCRIPTION PUBLIQUE
+
+C'est une règle métier obligatoire.
+
+**Les employés et les responsables ne doivent pas pouvoir créer eux-mêmes leurs comptes.**
+
+L'application doit proposer uniquement une page de connexion aux utilisateurs.
+
+Le formulaire contient :
+
+* Adresse email professionnelle.
+* Mot de passe.
+* Bouton « Se connecter ».
+* Lien « Mot de passe oublié ? ».
+
+Il ne doit pas y avoir de bouton :
+
+* S'inscrire.
+* Créer un compte.
+* Rejoindre l'entreprise.
+
+## Comment les utilisateurs obtiennent-ils leur compte ?
+
+C'est l'administrateur qui crée les comptes depuis son espace d'administration.
+
+Lorsqu'un nouvel employé rejoint l'entreprise, l'administrateur renseigne ses informations et crée son compte.
+
+Le système doit ensuite prévoir l'envoi d'un email d'activation sécurisé.
+
+Cet email permet à l'employé de définir son propre mot de passe.
+
+Ne pas envoyer de mot de passe en clair par email.
+
+Le lien d'activation doit être unique, temporaire et utilisable une seule fois.
+
+Une fois son compte activé, l'employé peut se connecter.
+
+Le même fonctionnement s'applique aux responsables.
+
+## Création du premier administrateur
+
+Le premier compte administrateur doit être créé de manière sécurisée lors de l'initialisation du système.
+
+Il ne doit pas exister de formulaire public permettant à un utilisateur de devenir administrateur.
+
+---
+
+# 4. IDENTITÉ VISUELLE À RESPECTER
+
+L'espace Administrateur doit conserver la même identité visuelle que les espaces Employé et Responsable.
+
+## Palette
+
+* Fond ivoire : #F7F5F0.
+* Bleu pétrole : #173B3F.
+* Texte principal : #202824.
+* Texte secondaire : #66736F.
+* Vert : #287A55.
+* Ambre : #A86412.
+* Rouge : #B42332.
+
+## Typographie
+
+Utiliser :
+
+**DM Serif Display** pour les grands titres éditoriaux.
+
+**DM Sans** pour le reste de l'interface.
+
+## Direction artistique
+
+Corporate Editorial + Human-Centered Design.
+
+Je souhaite une interface :
+
+* Premium.
+* Professionnelle.
+* Minimaliste.
+* Moderne.
+* Structurée.
+* Élégante.
+* Facile à comprendre.
+
+Privilégier les séparateurs fins, les espacements équilibrés, les tableaux lisibles et les composants discrets.
+
+Ne pas créer un dashboard SaaS générique rempli de cartes colorées et de graphiques inutiles.
+
+L'espace Administrateur peut être plus dense que l'espace Employé, car il contient davantage d'outils de gestion.
+
+Cependant, il doit conserver exactement la même identité graphique.
+
+---
+
+# 5. STRUCTURE GÉNÉRALE DE L'ESPACE ADMINISTRATEUR
+
+Créer une interface avec :
+
+* Une navigation latérale à gauche.
+* Une barre supérieure.
+* Une zone de contenu principale.
+* Des tableaux de gestion.
+* Des formulaires de création et de modification.
+* Des fenêtres de confirmation.
+* Des notifications de succès ou d'erreur.
+
+## MENU LATÉRAL
+
+En haut :
+
+**EmployeeCare**
+
+Sous le logo :
+
+**ESPACE ADMINISTRATEUR**
+
+Afficher le menu suivant :
+
+1. Tableau de bord
+2. Employés
+3. Responsables
+4. Départements
+5. Catégories et attributions
+6. Signalements
+7. Rapports et statistiques
+8. Paramètres
+
+En bas :
+
+* Profil administrateur.
+* Déconnexion.
+
+Chaque rubrique doit être fonctionnelle.
+
+---
+
+# 6. INTERFACE 1 — TABLEAU DE BORD ADMINISTRATEUR
+
+Créer un tableau de bord professionnel présentant une vision globale de la plateforme.
+
+## En-tête
+
+Afficher :
+
+**Bonjour, bienvenue dans votre espace d'administration.**
+
+Texte secondaire :
+
+« Gérez les utilisateurs, organisez les services et supervisez le traitement des préoccupations professionnelles. »
+
+## Indicateurs principaux
+
+Afficher :
+
+**Employés actifs**
+
+Nombre total d'employés disposant d'un compte actif.
+
+**Responsables actifs**
+
+Nombre de responsables habilités à traiter les signalements.
+
+**Signalements en attente**
+
+Nombre de problèmes qui attendent une prise en charge.
+
+**Signalements en cours**
+
+Nombre de problèmes actuellement en traitement.
+
+Prévoir une section secondaire pour consulter les signalements résolus et clôturés.
+
+Les statistiques doivent être calculées à partir des données disponibles.
+
+## Actions rapides
+
+Ajouter trois actions principales :
+
+**+ Ajouter un employé**
+
+**+ Ajouter un responsable**
+
+**+ Créer un département**
+
+Ces boutons doivent permettre d'accéder directement aux formulaires correspondants.
+
+## Activité récente
+
+Créer une section présentant les événements administratifs récents :
+
+* Nouvel employé ajouté.
+* Responsable créé.
+* Responsable désactivé.
+* Département créé.
+* Attribution modifiée.
+
+Les événements doivent être datés.
+
+## Signalements nécessitant une attention administrative
+
+Afficher uniquement les informations auxquelles l'administrateur est autorisé à accéder.
+
+Ne pas révéler automatiquement le contenu des signalements confidentiels.
+
+---
+
+# 7. INTERFACE 2 — GESTION DES EMPLOYÉS
+
+Cette rubrique est essentielle.
+
+L'administrateur doit pouvoir gérer les comptes des employés de l'entreprise.
+
+## Page principale
+
+Titre :
+
+**Gestion des employés**
+
+Description :
+
+« Retrouvez et gérez les collaborateurs autorisés à utiliser EmployeeCare. »
+
+Ajouter un bouton principal :
+
+**+ Ajouter un employé**
+
+## Tableau des employés
+
+Afficher les colonnes suivantes :
+
+* Matricule.
+* Nom et prénom.
+* Adresse email.
+* Département.
+* Rôle.
+* Statut du compte.
+* Date de création.
+* Actions.
+
+## Fonctionnalités
+
+L'administrateur doit pouvoir :
+
+* Consulter les employés.
+* Rechercher un employé.
+* Filtrer par département.
+* Filtrer par statut.
+* Ajouter un employé.
+* Modifier ses informations.
+* Désactiver son compte.
+* Réactiver son compte.
+* Consulter les informations administratives de son profil.
+
+Prévoir une pagination.
+
+## FORMULAIRE « AJOUTER UN EMPLOYÉ »
+
+Lorsque l'administrateur clique sur « Ajouter un employé », ouvrir un formulaire élégant.
+
+Champs :
+
+**Informations personnelles**
+
+* Nom.
+* Prénom.
+* Adresse email professionnelle.
+* Téléphone professionnel (facultatif).
+* Matricule (si utilisé par l'entreprise).
+
+**Informations professionnelles**
+
+* Département.
+* Fonction ou poste occupé.
+* Rôle : Employé.
+
+**Compte**
+
+* Statut initial : En attente d'activation.
+
+Ajouter les boutons :
+
+**Annuler**
+
+**Créer le compte**
+
+## Après validation
+
+Le système doit :
+
+1. Vérifier les informations.
+2. Contrôler l'unicité de l'adresse email.
+3. Créer le compte.
+4. Lui attribuer le rôle EMPLOYE.
+5. Préparer l'envoi d'une invitation d'activation par email.
+6. Afficher un message de confirmation.
+
+Exemple :
+
+« Le compte de Paul Martin a été créé. Une invitation d'activation a été préparée pour son adresse professionnelle. »
+
+N'afficher « Email envoyé » que lorsque le service d'envoi a réellement confirmé l'opération.
+
+L'employé pourra ensuite définir son mot de passe et se connecter.
+
+---
+
+# 8. INTERFACE 3 — GESTION DES RESPONSABLES
+
+C'est l'une des fonctionnalités les plus importantes de l'espace Administrateur.
+
+L'administrateur doit pouvoir **créer, modifier, désactiver et remplacer les responsables chargés de résoudre les problèmes des employés**.
+
+## Page principale
+
+Titre :
+
+**Gestion des responsables**
+
+Description :
+
+« Gérez les personnes chargées de prendre en charge et de résoudre les signalements de l'entreprise. »
+
+Ajouter un bouton :
+
+**+ Ajouter un responsable**
+
+## Tableau des responsables
+
+Afficher :
+
+* Nom et prénom.
+* Adresse email.
+* Département.
+* Catégories prises en charge.
+* Nombre de signalements en cours.
+* Statut.
+* Actions.
+
+## Actions disponibles
+
+Chaque ligne doit proposer :
+
+* Consulter.
+* Modifier.
+* Modifier les attributions.
+* Désactiver.
+* Réactiver.
+* Supprimer le compte, selon les règles de conservation définies.
+
+## FORMULAIRE « AJOUTER UN RESPONSABLE »
+
+Afficher un formulaire contenant :
+
+**Informations personnelles**
+
+* Nom.
+* Prénom.
+* Email professionnel.
+* Téléphone professionnel (facultatif).
+
+**Informations professionnelles**
+
+* Département.
+* Fonction.
+* Rôle : Responsable.
+
+**Responsabilités**
+
+* Catégories de signalements à traiter.
+* Service ou périmètre de responsabilité.
+* Possibilité de recevoir de nouvelles attributions.
+
+## Deux possibilités de création
+
+L'administrateur doit pouvoir :
+
+**Option A — Promouvoir un employé existant**
+
+Sélectionner un employé déjà enregistré et lui attribuer le rôle Responsable.
+
+Son compte existant est conservé.
+
+Il peut désormais accéder à son espace Employé ainsi qu'à son espace Responsable.
+
+**Option B — Créer un nouveau responsable**
+
+Créer directement un compte Responsable pour une personne qui ne possède pas encore de compte EmployeeCare.
+
+Le système prépare alors une invitation d'activation par email.
+
+Ne pas créer deux comptes pour une même personne.
+
+## Exemple
+
+L'administrateur crée :
+
+Nom : Dubois
+
+Prénom : Sophie
+
+Email : [sophie.dubois@entreprise.com](mailto:sophie.dubois@entreprise.com)
+
+Département : Informatique
+
+Rôle : Responsable
+
+Catégories prises en charge :
+
+* Réseau et Internet.
+* Matériel informatique.
+* Logiciels.
+* Accès aux systèmes.
+
+Après activation, Sophie peut se connecter à son espace Responsable.
+
+Elle voit uniquement les signalements correspondant à ses autorisations.
+
+---
+
+# 9. SUPPRESSION ET DÉSACTIVATION D'UN RESPONSABLE
+
+L'administrateur doit pouvoir retirer un responsable de la plateforme.
+
+Cependant, la suppression d'un responsable ne doit jamais provoquer la disparition des problèmes déjà traités.
+
+## Exemple
+
+Sophie est responsable informatique.
+
+Elle possède quatre signalements en cours.
+
+L'administrateur souhaite la retirer de ses fonctions.
+
+Avant de confirmer, le système doit afficher :
+
+**« Ce responsable possède actuellement 4 signalements en cours. Veuillez les réattribuer avant de désactiver son accès. »**
+
+L'administrateur peut alors :
+
+1. Sélectionner un autre responsable habilité.
+2. Réattribuer les problèmes encore ouverts.
+3. Confirmer le retrait de Sophie.
+4. Désactiver son accès Responsable.
+
+Les interventions réalisées par Sophie doivent rester présentes dans l'historique.
+
+## Règle importante
+
+Privilégier une suppression logique ou une désactivation plutôt qu'une suppression physique immédiate.
+
+Cela permet de conserver la traçabilité des interventions.
+
+Lorsqu'un responsable quitte ses fonctions, son accès Responsable est supprimé, mais son compte Employé peut rester actif s'il travaille toujours dans l'entreprise.
+
+Si la personne quitte définitivement l'entreprise, l'administrateur peut également désactiver son compte utilisateur.
+
+Dans tous les cas, afficher une fenêtre de confirmation claire.
+
+---
+
+# 10. INTERFACE 4 — GESTION DES DÉPARTEMENTS
+
+Créer une page permettant à l'administrateur d'organiser les services de l'entreprise.
+
+## Titre
+
+**Départements**
+
+Description :
+
+« Organisez les services de votre entreprise et définissez leurs responsables. »
+
+## Tableau
+
+Afficher :
+
+* Nom du département.
+* Description.
+* Responsable principal.
+* Nombre d'employés.
+* Nombre de signalements actifs.
+* Statut.
+* Actions.
+
+## Fonctionnalités
+
+* Créer un département.
+* Modifier un département.
+* Affecter un responsable.
+* Consulter les employés du département.
+* Désactiver un département.
+
+## Exemple de départements
+
+* Informatique.
+* Ressources humaines.
+* Administration.
+* Comptabilité.
+* Maintenance.
+* Commercial.
+
+Les départements ne doivent pas être définitivement codés en dur.
+
+L'administrateur doit pouvoir les personnaliser.
+
+---
+
+# 11. INTERFACE 5 — CATÉGORIES ET ATTRIBUTIONS
+
+Créer une interface permettant de définir les types de problèmes et les services chargés de leur résolution.
+
+## Titre
+
+**Catégories et attributions**
+
+Description :
+
+« Définissez les catégories de signalements et les personnes chargées de leur traitement. »
+
+## Tableau
+
+Afficher :
+
+* Nom de la catégorie.
+* Description.
+* Service responsable.
+* Responsable principal.
+* Responsable secondaire, si configuré.
+* Statut.
+* Actions.
+
+## Exemple
+
+| Catégorie             | Service compétent   | Responsable             |
+| --------------------- | ------------------- | ----------------------- |
+| Connexion Internet    | Informatique        | Sophie Dubois           |
+| Ordinateur défectueux | Informatique        | Sophie Dubois           |
+| Problème de salaire   | Ressources humaines | Responsable RH habilité |
+| Matériel endommagé    | Maintenance         | Responsable Maintenance |
+| Congés                | Ressources humaines | Responsable RH habilité |
+
+## Fonctionnement
+
+Lorsqu'un employé crée un signalement, le système doit pouvoir déterminer le service compétent à partir de sa catégorie.
+
+Le signalement peut ensuite être dirigé vers le responsable habilité.
+
+L'administrateur doit pouvoir modifier ces règles.
+
+Prévoir la possibilité qu'une catégorie ne possède temporairement aucun responsable.
+
+Dans ce cas, afficher un avertissement administratif :
+
+**« Aucun responsable n'est actuellement affecté à cette catégorie. »**
+
+Prévoir également un mécanisme de réattribution lorsque le responsable habituel est absent ou indisponible.
+
+## Cas des signalements sensibles
+
+Pour les catégories telles que les abus, le harcèlement ou les conflits graves, l'administrateur doit pouvoir configurer un groupe restreint de personnes habilitées.
+
+Ces signalements ne doivent pas être automatiquement visibles par tous les responsables RH.
+
+L'interface d'administration doit permettre de configurer les autorisations sans exposer inutilement les contenus confidentiels.
+
+---
+
+# 12. INTERFACE 6 — SUPERVISION DES SIGNALEMENTS
+
+Créer une page permettant à l'administrateur de suivre l'activité globale de la plateforme.
+
+## Titre
+
+**Suivi des signalements**
+
+Afficher les signalements ordinaires et les informations de supervision auxquelles l'administrateur est autorisé à accéder.
+
+## Tableau
+
+Colonnes :
+
+* Référence.
+* Catégorie.
+* Département concerné.
+* Responsable attribué.
+* Priorité.
+* Statut.
+* Date de création.
+* Dernière mise à jour.
+
+## Fonctionnalités
+
+* Rechercher un signalement.
+* Filtrer par catégorie.
+* Filtrer par département.
+* Filtrer par responsable.
+* Filtrer par statut.
+* Consulter les informations autorisées.
+* Identifier les problèmes sans responsable.
+* Réattribuer un problème si nécessaire.
+
+L'administrateur ne doit pas remplacer systématiquement les responsables dans le traitement quotidien.
+
+Son rôle principal est de superviser l'organisation et de s'assurer que les problèmes disposent d'un responsable compétent.
+
+---
+
+# 13. INTERFACE 7 — RAPPORTS ET STATISTIQUES
+
+Créer une page présentant une vue globale des préoccupations de l'entreprise.
+
+## Indicateurs
+
+Afficher :
+
+* Total des signalements.
+* Signalements en attente.
+* Signalements en cours.
+* Signalements résolus.
+* Signalements clôturés.
+* Délai moyen de résolution.
+
+## Graphiques
+
+Prévoir :
+
+**Évolution des signalements**
+
+Nombre de signalements créés par mois.
+
+**Répartition par catégorie**
+
+Identifier les catégories de problèmes les plus fréquentes.
+
+**Répartition par département**
+
+Identifier les services qui reçoivent le plus de problèmes à traiter.
+
+**Performance du traitement**
+
+Présenter les délais de prise en charge et de résolution.
+
+## Filtres
+
+Ajouter :
+
+* Période.
+* Département.
+* Catégorie.
+* Statut.
+
+Les données doivent correspondre aux filtres sélectionnés.
+
+Ne pas inventer de statistiques de conformité ou de satisfaction.
+
+Pour les dossiers confidentiels, afficher uniquement les données agrégées dont la diffusion est autorisée, en évitant toute information permettant d'identifier indirectement les personnes concernées.
+
+---
+
+# 14. INTERFACE 8 — PARAMÈTRES
+
+Créer une page de paramètres administratifs.
+
+Elle peut comprendre :
+
+**Informations de l'entreprise**
+
+* Nom de l'entreprise.
+* Logo.
+* Adresse email de contact.
+
+**Gestion des comptes**
+
+* Politique d'activation.
+* Paramètres des invitations.
+* Gestion des comptes désactivés.
+
+**Signalements**
+
+* Catégories disponibles.
+* Règles générales d'attribution.
+* Priorités disponibles.
+
+**Notifications**
+
+* Paramètres des notifications par email.
+* Types d'événements déclenchant une notification.
+
+Les réglages sensibles ne doivent être modifiables que par un administrateur autorisé.
+
+---
+
+# 15. GESTION DES RÔLES ET DES AUTORISATIONS
+
+Prévoir trois rôles principaux :
+
+**ADMIN**
+
+Gestion de la plateforme et des comptes.
+
+**RESPONSABLE**
+
+Traitement des signalements autorisés.
+
+**EMPLOYE**
+
+Création et suivi de ses propres signalements.
+
+Une personne possédant le rôle RESPONSABLE doit également pouvoir utiliser les fonctionnalités ordinaires de l'espace Employé.
+
+## Redirection après connexion
+
+Lorsque l'utilisateur se connecte :
+
+* EMPLOYE → Espace Employé.
+* RESPONSABLE → Espace Responsable.
+* ADMIN → Espace Administrateur.
+
+Pour un responsable, prévoir une action permettant de passer à son espace Employé.
+
+Les accès doivent être vérifiés côté serveur avec Spring Security.
+
+La protection des routes React constitue uniquement une sécurité d'interface supplémentaire.
+
+Un utilisateur ne doit jamais pouvoir devenir administrateur en modifiant simplement une valeur dans le navigateur.
+
+---
+
+# 16. GESTION DES COMPTES ET DES MOTS DE PASSE
+
+Ne pas prévoir d'inscription publique.
+
+Les comptes sont exclusivement créés par l'administrateur.
+
+## Cycle de vie d'un compte
+
+Un compte peut posséder les états suivants :
+
+**En attente d'activation**
+
+Compte créé, invitation envoyée ou en attente d'envoi.
+
+**Actif**
+
+L'utilisateur peut se connecter.
+
+**Désactivé**
+
+L'utilisateur ne peut plus se connecter.
+
+Prévoir un mécanisme sécurisé de réinitialisation du mot de passe.
+
+Ne jamais afficher les mots de passe des utilisateurs à l'administrateur.
+
+Les mots de passe devront être protégés côté backend par un mécanisme de hachage adapté.
+
+Les sessions et jetons d'un compte désactivé devront également être invalidés selon les règles de sécurité définies.
+
+---
+
+# 17. COMPORTEMENTS INTERACTIFS OBLIGATOIRES
+
+Je ne veux pas uniquement une maquette statique.
+
+Les fonctionnalités principales doivent être interactives.
+
+L'administrateur doit pouvoir :
+
+1. Ajouter un employé.
+2. Modifier ses informations.
+3. Désactiver un employé.
+4. Réactiver un employé.
+5. Ajouter un responsable.
+6. Promouvoir un employé en responsable.
+7. Modifier les attributions d'un responsable.
+8. Retirer un responsable de ses fonctions.
+9. Réattribuer les dossiers ouverts avant son retrait.
+10. Créer un département.
+11. Modifier un département.
+12. Créer une catégorie.
+13. Associer une catégorie à un responsable.
+14. Rechercher et filtrer les utilisateurs.
+15. Consulter les statistiques.
+16. Naviguer entre toutes les pages.
+
+Chaque action doit produire une mise à jour cohérente de l'interface.
+
+Exemple :
+
+Si l'administrateur crée un responsable, celui-ci doit immédiatement apparaître dans la liste des responsables.
+
+Le compteur des responsables doit également être actualisé.
+
+Si un compte est désactivé, son statut doit changer dans toutes les vues concernées.
+
+---
+
+# 18. ARCHITECTURE TECHNIQUE
+
+Technologies de référence :
+
+**Frontend**
+
+React.js et Tailwind CSS.
+
+**Backend prévu**
+
+Spring Boot.
+
+**Base de données prévue**
+
+PostgreSQL.
+
+**Authentification prévue**
+
+Spring Security et JWT.
+
+**Notifications prévues**
+
+Email.
+
+Si le backend n'est pas disponible, développer une version frontend de démonstration avec des données fictives centralisées.
+
+Prévoir une couche de services réutilisable.
+
+Les formulaires de création, modification et désactivation doivent être fonctionnels dans la démonstration.
+
+Ne pas prétendre envoyer réellement des emails ou sécuriser des comptes lorsque les services backend correspondants ne sont pas encore connectés.
+
+Organiser le code avec des composants réutilisables.
+
+Ne pas placer toute la logique dans un seul fichier React.
+
+---
+
+# 19. RESPONSIVE DESIGN
+
+L'espace Administrateur doit fonctionner sur :
+
+* Ordinateur.
+* Tablette.
+* Smartphone.
+
+## Sur ordinateur
+
+Navigation latérale et tableaux de gestion.
+
+## Sur tablette
+
+Navigation compacte et adaptation des tableaux.
+
+## Sur téléphone
+
+Navigation adaptée et présentation des informations en listes lisibles lorsque les tableaux deviennent trop larges.
+
+Les formulaires de création doivent rester faciles à remplir.
+
+Éviter les débordements horizontaux.
+
+---
+
+# 20. SCÉNARIOS DE TEST
+
+Utilise les scénarios suivants pour vérifier le fonctionnement de l'espace Administrateur.
+
+## SCÉNARIO A — CRÉATION D'UN EMPLOYÉ
+
+L'administrateur ouvre « Employés ».
+
+Il clique sur « Ajouter un employé ».
+
+Il renseigne :
+
+Nom : Martin.
+
+Prénom : Paul.
+
+Email : [paul.martin@entreprise.com](mailto:paul.martin@entreprise.com).
+
+Département : Comptabilité.
+
+Rôle : Employé.
+
+Il valide.
+
+Le nouveau compte apparaît dans la liste avec le statut « En attente d'activation ».
+
+Le système prépare une invitation par email.
+
+Une fois son compte activé, Paul peut se connecter à son espace Employé.
+
+## SCÉNARIO B — CRÉATION D'UN RESPONSABLE
+
+L'administrateur ouvre « Responsables ».
+
+Il clique sur « Ajouter un responsable ».
+
+Il renseigne :
+
+Nom : Dubois.
+
+Prénom : Sophie.
+
+Email : [sophie.dubois@entreprise.com](mailto:sophie.dubois@entreprise.com).
+
+Département : Informatique.
+
+Rôle : Responsable.
+
+Catégories :
+
+* Réseau et Internet.
+* Matériel informatique.
+* Logiciels.
+
+Il valide.
+
+Sophie apparaît dans la liste des responsables.
+
+Elle peut accéder à son espace Responsable après activation de son compte.
+
+## SCÉNARIO C — ATTRIBUTION AUTOMATIQUE
+
+Paul signale un problème de connexion Internet.
+
+La catégorie sélectionnée est « Réseau et Internet ».
+
+Cette catégorie est associée au département Informatique.
+
+Le signalement est orienté vers le service informatique, puis attribué selon les règles configurées.
+
+Sophie peut le consulter et le prendre en charge si elle est habilitée.
+
+## SCÉNARIO D — RETRAIT D'UN RESPONSABLE
+
+L'administrateur souhaite désactiver Sophie comme responsable.
+
+Sophie possède trois signalements en cours.
+
+Le système avertit l'administrateur.
+
+Il doit choisir un autre responsable habilité pour reprendre ces dossiers.
+
+Une fois les réattributions validées, l'accès Responsable de Sophie est retiré.
+
+Les interventions précédemment réalisées par Sophie restent visibles dans l'historique autorisé.
+
+Si Sophie conserve un compte Employé actif, elle peut continuer à l'utiliser.
+
+## SCÉNARIO E — CONNEXION
+
+Un employé accède à EmployeeCare.
+
+Il voit uniquement le formulaire de connexion.
+
+Aucun bouton d'inscription publique n'est disponible.
+
+Il se connecte avec les identifiants qu'il a définis après activation de son compte.
+
+Le système le redirige vers l'espace correspondant à son rôle.
+
+---
+
+# 21. PRIORITÉS DE DÉVELOPPEMENT
+
+Développe les fonctionnalités dans cet ordre :
+
+**Priorité 1**
+
+* Structure de l'espace Administrateur.
+* Navigation.
+* Tableau de bord.
+* Gestion des employés.
+* Gestion des responsables.
+
+**Priorité 2**
+
+* Gestion des départements.
+* Gestion des catégories.
+* Attribution des responsables.
+
+**Priorité 3**
+
+* Supervision des signalements.
+* Rapports et statistiques.
+* Paramètres.
+
+Accorde une attention particulière à la création et à la désactivation des utilisateurs.
+
+Ces fonctionnalités sont essentielles.
+
+---
+
+# 22. RÉSULTAT FINAL ATTENDU
+
+Je souhaite une interface Administrateur complète, cohérente avec les autres espaces EmployeeCare.
+
+Le résultat doit permettre de comprendre immédiatement :
+
+* Qui utilise l'application.
+* Quels employés possèdent un compte.
+* Quels responsables sont chargés de traiter les problèmes.
+* À quels départements ils appartiennent.
+* Quelles catégories ils prennent en charge.
+* Comment créer ou retirer un utilisateur.
+* Comment réattribuer les responsabilités.
+* Comment superviser le traitement des problèmes.
+
+## INSTRUCTIONS FINALES
+
+1. Travaille dans le projet EmployeeCare existant s'il est disponible.
+2. Conserve l'identité visuelle validée.
+3. Utilise DM Sans et DM Serif Display.
+4. Ne modifie pas inutilement les espaces Employé et Responsable.
+5. Ne crée pas de formulaire d'inscription publique.
+6. Seul l'administrateur peut créer les comptes.
+7. L'administrateur doit pouvoir créer, modifier et retirer les responsables.
+8. Préserve les historiques lors des désactivations.
+9. Ne mélange pas les permissions des trois rôles.
+10. Utilise des données fictives cohérentes si le backend n'est pas encore disponible.
+11. Rends les principaux boutons et formulaires interactifs.
+12. Ne présente pas de garanties de sécurité fictives.
+13. Prévois une architecture React maintenable et compatible avec Spring Boot.
+
+**OBJECTIF PRINCIPAL :**
+
+Créer un espace Administrateur EmployeeCare premium et fonctionnel permettant de gérer les employés, les responsables, leurs attributions et l'organisation générale de la plateforme.
+
+**Commence par construire les interfaces d'administration, en accordant la priorité à la gestion des employés et des responsables.**

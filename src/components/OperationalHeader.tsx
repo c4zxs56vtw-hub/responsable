@@ -29,7 +29,7 @@ export const OperationalHeader: React.FC<OperationalHeaderProps> = ({
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#146C48] animate-pulse"></span>
             <span className="text-xs text-[#146C48] font-medium font-['DM_Sans']">
-              Flux d'incidents synchronisé
+              Signalements de votre service
             </span>
             <span className="text-xs text-[#66736F] hidden sm:inline">•</span>
             <span className="text-xs font-semibold text-[#173B3F] font-['DM_Sans'] hidden sm:inline">

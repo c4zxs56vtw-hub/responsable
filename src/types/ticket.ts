@@ -19,6 +19,7 @@ export type TicketCategory =
   | 'Logiciels et Systèmes'
   | 'Ressources Humaines'
   | 'Conditions de Travail'
+  | 'Équipements et Locaux'
   | 'Médiation & Relations';
 
 export interface TimelineEvent {
@@ -29,8 +30,9 @@ export interface TimelineEvent {
   description: string;
   author: string;
   authorRole?: string;
-  type: 'creation' | 'assignment' | 'take_charge' | 'message' | 'resolution' | 'closure' | 'telemetry';
-  hash?: string;
+  type: 'creation' | 'assignment' | 'take_charge' | 'message' | 'resolution' | 'closure' | 'reopen';
+  previousStatus?: string;
+  newStatus?: string;
 }
 
 export interface Attachment {
@@ -90,7 +92,7 @@ export interface Ticket {
   // Assignment
   assignedTo?: string;
   assignedToRole?: string;
-  targetDepartment: string; // e.g. "Pôle Informatique & Infrastructure"
+  targetDepartment: string; // e.g. "Pôle Informatique et Infrastructure", "Direction des Ressources Humaines"
   
   // Dates
   createdAt: string;
@@ -126,12 +128,9 @@ export interface ResponsibleUser {
 }
 
 export interface OperationalMetrics {
-  activeTickets: number;
-  capacityRate: number;
-  criticalSlaCount: number;
-  criticalSlaItem?: string;
-  averageResolutionHours: number;
-  resolutionComparisonQuarter: string;
-  satisfactionRate: number;
-  satisfactionReviewsCount: number;
+  totalReceived: number; // Signalements reçus
+  toTreat: number;       // À traiter (EN_ATTENTE + ROUVERT)
+  inProgress: number;    // En cours (DIAGNOSTIC_EN_COURS + ATTENTE_VALIDATION)
+  resolved: number;      // Résolus (RESOLU + CLOTURE)
+  averageResolutionHours?: number;
 }

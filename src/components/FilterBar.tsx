@@ -30,25 +30,25 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Compute counts dynamically from current ticket state
+  // Compute counts dynamically
   const totalCount = tickets.length;
-  const unassignedCount = tickets.filter(
-    (t) => (!t.assignedTo || t.assignedTo.trim().length === 0) && t.status !== 'CLOTURE'
+  const toTreatCount = tickets.filter(
+    (t) => t.status === 'EN_ATTENTE' || t.status === 'ROUVERT'
   ).length;
-  const urgentCount = tickets.filter(
-    (t) => (t.priority === 'CRITIQUE' || t.isCriticalSla || t.priority === 'ELEVEE') && t.status !== 'CLOTURE' && t.status !== 'RESOLU'
-  ).length;
-  const pendingCount = tickets.filter(
-    (t) => t.status === 'EN_ATTENTE' || t.status === 'ATTENTE_VALIDATION'
+  const inProgressCount = tickets.filter(
+    (t) => t.status === 'DIAGNOSTIC_EN_COURS' || t.status === 'ATTENTE_VALIDATION'
   ).length;
   const resolvedCount = tickets.filter(
     (t) => t.status === 'RESOLU' || t.status === 'CLOTURE'
   ).length;
+  const urgentCount = tickets.filter(
+    (t) => (t.priority === 'CRITIQUE' || t.priority === 'ELEVEE') && t.status !== 'CLOTURE'
+  ).length;
 
   return (
-    <div className="bg-white p-2.5 rounded-lg border border-[#E5E0D8] shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+    <div className="bg-white p-2.5 rounded-lg border border-[#E5E0D8] shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
       {/* Search Input */}
-      <div className="relative flex-1">
+      <div className="relative flex-1 font-['DM_Sans']">
         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#66736F] text-lg pointer-events-none">
           search
         </span>
@@ -57,8 +57,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Filtrer par collaborateur, référence #EC, équipement..."
-          className="w-full pl-9 pr-14 py-1.5 text-xs font-['DM_Sans'] text-[#151D19] bg-[#EDF6EF]/70 rounded border border-transparent focus:border-[#173B3F] focus:bg-white focus:outline-none transition-all placeholder:text-[#66736F]"
+          placeholder="Rechercher par référence #EC, titre, catégorie, collaborateur..."
+          className="w-full pl-9 pr-14 py-1.5 text-xs text-[#151D19] bg-[#EDF6EF]/70 rounded border border-transparent focus:border-[#173B3F] focus:bg-white focus:outline-none transition-all placeholder:text-[#66736F]"
         />
         {searchQuery ? (
           <button
@@ -76,7 +76,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       {/* Quick Filter Buttons */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none" role="tablist">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none font-['DM_Sans']" role="tablist">
         {/* Tous */}
         <button
           type="button"
@@ -85,7 +85,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           onClick={() => onSelectFilterTab('all')}
           className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all ${
             activeFilterTab === 'all'
-              ? 'bg-[#173B3F] text-white shadow-sm'
+              ? 'bg-[#173B3F] text-white shadow-xs'
               : 'text-[#414849] hover:bg-[#F3FBF5] hover:text-[#151D19]'
           }`}
         >
@@ -99,72 +99,47 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           </span>
         </button>
 
-        {/* Non assignés */}
+        {/* À traiter */}
         <button
           type="button"
           role="tab"
-          aria-selected={activeFilterTab === 'unassigned'}
-          onClick={() => onSelectFilterTab('unassigned')}
+          aria-selected={activeFilterTab === 'to_treat'}
+          onClick={() => onSelectFilterTab('to_treat')}
           className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all ${
-            activeFilterTab === 'unassigned'
-              ? 'bg-[#173B3F] text-white shadow-sm'
-              : 'text-[#414849] hover:bg-[#F3FBF5] hover:text-[#151D19]'
-          }`}
-        >
-          <span>Non assignés</span>
-          <span
-            className={`font-['JetBrains_Mono'] text-[10px] px-1 py-0.2 rounded ${
-              activeFilterTab === 'unassigned' ? 'bg-white/20 text-white' : 'bg-[#DCE5DE] text-[#151D19]'
-            }`}
-          >
-            {unassignedCount}
-          </span>
-        </button>
-
-        {/* Prioritaires / Urgents */}
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeFilterTab === 'urgent'}
-          onClick={() => onSelectFilterTab('urgent')}
-          className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all ${
-            activeFilterTab === 'urgent'
-              ? 'bg-[#BA1A1A] text-white shadow-sm'
+            activeFilterTab === 'to_treat'
+              ? 'bg-[#BA1A1A] text-white shadow-xs'
               : 'text-[#BA1A1A] hover:bg-[#FFDAD6]/40'
           }`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#BA1A1A]"></span>
-          <span>Prioritaires / Urgents</span>
+          <span>À traiter</span>
           <span
-            className={`font-['JetBrains_Mono'] text-[10px] px-1 py-0.2 rounded ${
-              activeFilterTab === 'urgent'
-                ? 'bg-white/20 text-white'
-                : 'bg-[#FFDAD6] text-[#93000A] font-bold'
+            className={`font-['JetBrains_Mono'] text-[10px] px-1 py-0.2 rounded font-bold ${
+              activeFilterTab === 'to_treat' ? 'bg-white/20 text-white' : 'bg-[#FFDAD6] text-[#93000A]'
             }`}
           >
-            {urgentCount}
+            {toTreatCount}
           </span>
         </button>
 
-        {/* En attente de retour */}
+        {/* En cours */}
         <button
           type="button"
           role="tab"
-          aria-selected={activeFilterTab === 'pending'}
-          onClick={() => onSelectFilterTab('pending')}
+          aria-selected={activeFilterTab === 'in_progress'}
+          onClick={() => onSelectFilterTab('in_progress')}
           className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all ${
-            activeFilterTab === 'pending'
-              ? 'bg-[#173B3F] text-white shadow-sm'
+            activeFilterTab === 'in_progress'
+              ? 'bg-[#173B3F] text-white shadow-xs'
               : 'text-[#414849] hover:bg-[#F3FBF5] hover:text-[#151D19]'
           }`}
         >
-          <span>En attente de retour</span>
+          <span>En cours</span>
           <span
             className={`font-['JetBrains_Mono'] text-[10px] px-1 py-0.2 rounded ${
-              activeFilterTab === 'pending' ? 'bg-white/20 text-white' : 'bg-[#E7F0E9] text-[#414849]'
+              activeFilterTab === 'in_progress' ? 'bg-white/20 text-white' : 'bg-[#E7F0E9] text-[#414849]'
             }`}
           >
-            {pendingCount}
+            {inProgressCount}
           </span>
         </button>
 
@@ -176,17 +151,40 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           onClick={() => onSelectFilterTab('resolved')}
           className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all ${
             activeFilterTab === 'resolved'
-              ? 'bg-[#146C48] text-white shadow-sm'
+              ? 'bg-[#146C48] text-white shadow-xs'
               : 'text-[#146C48] hover:bg-[#EDF6EF]'
           }`}
         >
           <span>Résolus</span>
           <span
-            className={`font-['JetBrains_Mono'] text-[10px] px-1 py-0.2 rounded ${
+            className={`font-['JetBrains_Mono'] text-[10px] px-1 py-0.2 rounded font-bold ${
               activeFilterTab === 'resolved' ? 'bg-white/20 text-white' : 'bg-[#A2F4C6] text-[#002112]'
             }`}
           >
             {resolvedCount}
+          </span>
+        </button>
+
+        {/* Prioritaires / Urgents */}
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeFilterTab === 'urgent'}
+          onClick={() => onSelectFilterTab('urgent')}
+          className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 transition-all ${
+            activeFilterTab === 'urgent'
+              ? 'bg-[#002529] text-white shadow-xs'
+              : 'text-[#414849] hover:bg-[#F3FBF5]'
+          }`}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-[#BA1A1A]"></span>
+          <span>Urgents</span>
+          <span
+            className={`font-['JetBrains_Mono'] text-[10px] px-1 py-0.2 rounded ${
+              activeFilterTab === 'urgent' ? 'bg-white/20 text-white' : 'bg-[#E7F0E9] text-[#414849]'
+            }`}
+          >
+            {urgentCount}
           </span>
         </button>
       </div>

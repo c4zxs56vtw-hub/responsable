@@ -1,4 +1,4 @@
-import { Ticket, TicketStatus, OperationalMetrics, ResponsibleUser, Message, TimelineEvent } from '../types/ticket';
+import { Ticket, OperationalMetrics, ResponsibleUser, Message, TimelineEvent } from '../types/ticket';
 
 export function filterTickets(
   tickets: Ticket[],
@@ -8,57 +8,69 @@ export function filterTickets(
     category?: string;
     priority?: string;
     status?: string;
+    targetDepartment?: string;
   }
 ): Ticket[] {
-  const { search = '', filterTab = 'all', category, priority, status } = options;
+  const { search = '', filterTab = 'all', category, priority, status, targetDepartment } = options;
   const query = search.trim().toLowerCase();
 
   return tickets.filter((ticket) => {
-    // Search query matching
+    // 1. Department scoping if specified
+    if (targetDepartment && ticket.targetDepartment !== targetDepartment) {
+      return false;
+    }
+
+    // 2. Search query matching
     if (query) {
       const matchRef = ticket.reference.toLowerCase().includes(query);
       const matchTitle = ticket.title.toLowerCase().includes(query);
       const matchDesc = ticket.description.toLowerCase().includes(query);
-      const matchReq = ticket.requesterName?.toLowerCase().includes(query) ?? false;
+      const matchCat = ticket.category.toLowerCase().includes(query);
+      const matchReq = (!ticket.isAnonymous && ticket.requesterName)
+        ? ticket.requesterName.toLowerCase().includes(query)
+        : false;
       const matchDept = ticket.requesterDepartment?.toLowerCase().includes(query) ?? false;
       const matchLoc = ticket.requesterLocation?.toLowerCase().includes(query) ?? false;
-      if (!matchRef && !matchTitle && !matchDesc && !matchReq && !matchDept && !matchLoc) {
+      
+      if (!matchRef && !matchTitle && !matchDesc && !matchCat && !matchReq && !matchDept && !matchLoc) {
         return false;
       }
     }
 
-    // Quick filter tabs matching
-    if (filterTab === 'unassigned') {
-      if (ticket.assignedTo && ticket.assignedTo.trim().length > 0) return false;
-    } else if (filterTab === 'urgent') {
-      if (ticket.priority !== 'CRITIQUE' && !ticket.isCriticalSla && ticket.priority !== 'ELEVEE') {
-        return false;
-      }
-    } else if (filterTab === 'pending') {
-      if (ticket.status !== 'EN_ATTENTE' && ticket.status !== 'ATTENTE_VALIDATION') {
+    // 3. Workflow filter tabs
+    if (filterTab === 'to_treat') {
+      // À traiter: en attente ou rouvert
+      if (ticket.status !== 'EN_ATTENTE' && ticket.status !== 'ROUVERT') {
         return false;
       }
     } else if (filterTab === 'in_progress') {
-      if (ticket.status !== 'DIAGNOSTIC_EN_COURS' && ticket.status !== 'ROUVERT') {
+      // En cours: diagnostic ou attente validation
+      if (ticket.status !== 'DIAGNOSTIC_EN_COURS' && ticket.status !== 'ATTENTE_VALIDATION') {
         return false;
       }
     } else if (filterTab === 'resolved') {
+      // Résolus: résolu ou clôturé
       if (ticket.status !== 'RESOLU' && ticket.status !== 'CLOTURE') {
+        return false;
+      }
+    } else if (filterTab === 'urgent') {
+      // Urgents: priorité critique ou élevée
+      if (ticket.priority !== 'CRITIQUE' && ticket.priority !== 'ELEVEE') {
         return false;
       }
     }
 
-    // Explicit category filter
+    // 4. Explicit category filter
     if (category && category !== 'ALL' && ticket.category !== category) {
       return false;
     }
 
-    // Explicit priority filter
+    // 5. Explicit priority filter
     if (priority && priority !== 'ALL' && ticket.priority !== priority) {
       return false;
     }
 
-    // Explicit status filter
+    // 6. Explicit status filter
     if (status && status !== 'ALL' && ticket.status !== status) {
       return false;
     }
@@ -67,61 +79,53 @@ export function filterTickets(
   });
 }
 
-export function computeMetrics(tickets: Ticket[]): OperationalMetrics {
-  const activeTickets = tickets.filter(
-    (t) => t.status !== 'CLOTURE' && t.status !== 'RESOLU'
+export function computeMetrics(tickets: Ticket[], targetDepartment?: string): OperationalMetrics {
+  const scopedTickets = targetDepartment
+    ? tickets.filter((t) => t.targetDepartment === targetDepartment)
+    : tickets;
+
+  const totalReceived = scopedTickets.length;
+  const toTreat = scopedTickets.filter(
+    (t) => t.status === 'EN_ATTENTE' || t.status === 'ROUVERT'
+  ).length;
+  const inProgress = scopedTickets.filter(
+    (t) => t.status === 'DIAGNOSTIC_EN_COURS' || t.status === 'ATTENTE_VALIDATION'
+  ).length;
+  const resolved = scopedTickets.filter(
+    (t) => t.status === 'RESOLU' || t.status === 'CLOTURE'
   ).length;
 
-  const criticalSlaTickets = tickets.filter(
-    (t) => (t.priority === 'CRITIQUE' || t.isCriticalSla) && t.status !== 'CLOTURE' && t.status !== 'RESOLU'
-  );
-
-  const criticalSlaCount = criticalSlaTickets.length;
-  const criticalSlaItem = criticalSlaTickets.length > 0
-    ? criticalSlaTickets[0].title.replace(/\(.*\)/, '').trim()
-    : undefined;
-
   return {
-    activeTickets,
-    capacityRate: Math.min(100, Math.round((activeTickets / 11) * 100)),
-    criticalSlaCount,
-    criticalSlaItem,
+    totalReceived,
+    toTreat,
+    inProgress,
+    resolved,
     averageResolutionHours: 3.4,
-    resolutionComparisonQuarter: '-18% vs moyenne trimestrielle',
-    satisfactionRate: 98,
-    satisfactionReviewsCount: 54,
   };
-}
-
-export function generateAuditHash(): string {
-  const chars = '0123456789ABCDEF';
-  let hash = '';
-  for (let i = 0; i < 12; i++) {
-    hash += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return `#${hash.slice(0, 4)}-${hash.slice(4, 8)}-${hash.slice(8, 12)}`;
 }
 
 export function takeChargeTicket(ticket: Ticket, manager: ResponsibleUser): Ticket {
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  
+  const prevStatus = ticket.status;
+
   const newEvent: TimelineEvent = {
     id: `tl-${Date.now()}`,
     time: timeStr,
     timestamp: now.toISOString(),
     title: `Pris en charge par ${manager.name}`,
-    description: `Attribution de la responsabilité opérationnelle. Évaluation de la priorité : ${ticket.priority}.`,
+    description: `Attribution de la responsabilité opérationnelle au responsable de service.`,
     author: manager.name,
     authorRole: manager.role,
     type: 'take_charge',
-    hash: generateAuditHash(),
+    previousStatus: prevStatus,
+    newStatus: 'DIAGNOSTIC_EN_COURS',
   };
 
   return {
     ...ticket,
     status: 'DIAGNOSTIC_EN_COURS',
-    assignedTo: `${manager.name} (Vous)`,
+    assignedTo: manager.name,
     assignedToRole: manager.role,
     updatedAt: now.toISOString(),
     timeline: [newEvent, ...ticket.timeline],
@@ -137,6 +141,7 @@ export function proposeResolution(
 ): Ticket {
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const prevStatus = ticket.status;
 
   const newEvent: TimelineEvent = {
     id: `tl-${Date.now()}`,
@@ -147,7 +152,8 @@ export function proposeResolution(
     author: manager.name,
     authorRole: manager.role,
     type: 'resolution',
-    hash: generateAuditHash(),
+    previousStatus: prevStatus,
+    newStatus: 'RESOLU',
   };
 
   return {
@@ -170,16 +176,18 @@ export function confirmClosure(ticket: Ticket, employeeName?: string): Ticket {
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   const author = employeeName || ticket.requesterName || 'Collaborateur';
+  const prevStatus = ticket.status;
 
   const newEvent: TimelineEvent = {
     id: `tl-${Date.now()}`,
     time: timeStr,
     timestamp: now.toISOString(),
     title: 'Clôture validée par le collaborateur',
-    description: 'Le collaborateur a certifié que le dysfonctionnement est résolu à son niveau.',
+    description: 'Le collaborateur a confirmé que le dysfonctionnement est résolu à son niveau.',
     author,
     type: 'closure',
-    hash: generateAuditHash(),
+    previousStatus: prevStatus,
+    newStatus: 'CLOTURE',
   };
 
   return {
@@ -193,16 +201,18 @@ export function confirmClosure(ticket: Ticket, employeeName?: string): Ticket {
 export function reopenTicket(ticket: Ticket, reason: string): Ticket {
   const now = new Date();
   const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const prevStatus = ticket.status;
 
   const newEvent: TimelineEvent = {
     id: `tl-${Date.now()}`,
     time: timeStr,
     timestamp: now.toISOString(),
-    title: 'Signalement rouvert : Persistance signalée',
+    title: 'Signalement rouvert : Le problème persiste',
     description: reason || 'Le collaborateur indique que le problème persiste après test.',
     author: ticket.requesterName || 'Collaborateur',
-    type: 'take_charge',
-    hash: generateAuditHash(),
+    type: 'reopen',
+    previousStatus: prevStatus,
+    newStatus: 'ROUVERT',
   };
 
   return {
@@ -226,7 +236,7 @@ export function addMessage(
     id: `msg-${Date.now()}`,
     sender: sender.name,
     senderRole: 'RESPONSABLE',
-    recipient: isInternalNote ? 'Collège Technique DSI' : (ticket.requesterName || 'Collaborateur'),
+    recipient: isInternalNote ? 'Équipe interne du service' : (ticket.requesterName || 'Collaborateur'),
     content,
     timestamp: timeStr,
     isInternalNote,
@@ -237,13 +247,12 @@ export function addMessage(
     time: timeStr,
     timestamp: now.toISOString(),
     title: isInternalNote
-      ? `Note technique confidentielle ajoutée`
+      ? `Observation interne enregistrée`
       : `Message transmis à ${ticket.requesterName || 'Collaborateur'}`,
     description: content,
     author: sender.name,
     authorRole: sender.role,
     type: 'message',
-    hash: generateAuditHash(),
   };
 
   return {

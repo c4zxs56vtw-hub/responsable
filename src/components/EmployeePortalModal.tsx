@@ -78,7 +78,7 @@ export const EmployeePortalModal: React.FC<EmployeePortalModalProps> = ({
             className="flex items-center gap-1 text-xs text-[#002529] font-bold bg-[#EDF6EF] px-2.5 py-1 rounded hover:bg-[#DCE5DE]"
           >
             <span className="material-symbols-outlined text-sm">arrow_back</span>
-            <span>Retour Console Responsable</span>
+            <span>Retour Espace Responsable</span>
           </button>
         </div>
 
