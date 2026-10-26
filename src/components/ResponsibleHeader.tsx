@@ -1,44 +1,39 @@
 import React, { useState } from 'react';
 import { ResponsibleUser } from '../types/ticket';
-import { AVAILABLE_MANAGERS } from '../data/mock-tickets';
 import { SessionProfile } from '../types/admin';
 
 interface ResponsibleHeaderProps {
   currentUser: ResponsibleUser;
   unreadCount?: number;
   sessionProfile?: SessionProfile;
-  availableDemoProfiles?: SessionProfile[];
-  onSelectDemoProfile?: (profileId: string) => void;
   onOpenMobileMenu?: () => void;
-  onSelectManager?: (manager: ResponsibleUser) => void;
   onSwitchToAdmin?: () => void;
   onOpenEmployeeSpace?: () => void;
+  onLogout?: () => void;
 }
 
 export const ResponsibleHeader: React.FC<ResponsibleHeaderProps> = ({
   currentUser,
   unreadCount = 2,
   sessionProfile,
-  availableDemoProfiles = [],
-  onSelectDemoProfile,
   onOpenMobileMenu,
-  onSelectManager,
   onSwitchToAdmin,
   onOpenEmployeeSpace,
+  onLogout,
 }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
 
   const canAccessAdmin = sessionProfile
     ? sessionProfile.roles.includes('ADMINISTRATEUR')
-    : true;
+    : false;
   const canAccessEmploye = sessionProfile
     ? sessionProfile.roles.includes('EMPLOYE')
     : true;
 
   return (
     <header className="h-16 bg-[#FFFFFF]/90 backdrop-blur-md border-b border-[#E5E0D8] px-4 lg:px-8 flex items-center justify-between sticky top-0 z-20">
-      {/* Left Department Badge & Authorized Navigation */}
+      {/* Left Department Badge & Authorized Role Navigation */}
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenMobileMenu}
@@ -71,36 +66,13 @@ export const ResponsibleHeader: React.FC<ResponsibleHeaderProps> = ({
             onClick={onOpenEmployeeSpace}
             className="hidden sm:inline-flex px-2.5 py-1 rounded bg-[#F7F5F0] text-[#202824] border border-[#E5E0D8] text-xs font-semibold hover:bg-[#E5E0D8] transition-colors whitespace-nowrap"
           >
-            Mon Espace Employé
+            Accéder à mon espace Employé
           </button>
         )}
       </div>
 
-      {/* Right User, Demo Selector & Notifications */}
+      {/* Right User Notifications, Profile & Logout */}
       <div className="flex items-center gap-3 lg:gap-4">
-        {availableDemoProfiles.length > 0 && onSelectDemoProfile && sessionProfile && (
-          <div
-            className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#F7F5F0] border border-[#E5E0D8] text-xs font-['DM_Sans']"
-            title="Sélecteur de profil réservé au mode développement"
-          >
-            <span className="font-['JetBrains_Mono'] text-[10px] uppercase font-bold text-[#A86412] px-1 py-0.5 bg-[#FFF8EB] rounded border border-[#A86412]/30">
-              Mode Démo
-            </span>
-            <select
-              aria-label="Sélecteur de profil (Mode développement)"
-              value={sessionProfile.id}
-              onChange={(e) => onSelectDemoProfile(e.target.value)}
-              className="bg-transparent text-xs font-semibold text-[#202824] focus:outline-none cursor-pointer"
-            >
-              {availableDemoProfiles.map((prof) => (
-                <option key={prof.id} value={prof.id}>
-                  {prof.fullName} ({prof.roleLabel})
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
         {/* Notifications Icon with Badge */}
         <div className="relative">
           <button
@@ -140,7 +112,7 @@ export const ResponsibleHeader: React.FC<ResponsibleHeaderProps> = ({
         {/* Vertical Hairline Separator */}
         <div className="h-6 w-px bg-[#E5E0D8]"></div>
 
-        {/* Manager Identity Profile & Switcher */}
+        {/* Manager Identity Profile */}
         <div className="relative">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -175,39 +147,48 @@ export const ResponsibleHeader: React.FC<ResponsibleHeaderProps> = ({
                 </p>
               </div>
 
-              {/* Department Switcher */}
-              <div className="py-1">
-                <span className="text-[#66736F] block text-[11px] font-semibold mb-1.5">
-                  Changer de responsable (Démo multi-services) :
-                </span>
-                <div className="flex flex-col gap-1">
-                  {AVAILABLE_MANAGERS.map((mgr) => (
-                    <button
-                      key={mgr.id}
-                      onClick={() => {
-                        if (onSelectManager) onSelectManager(mgr);
-                        setShowProfileMenu(false);
-                      }}
-                      className={`w-full text-left p-1.5 rounded text-xs flex items-center justify-between ${
-                        currentUser.id === mgr.id
-                          ? 'bg-[#173B3F] text-white font-semibold'
-                          : 'hover:bg-[#F3FBF5] text-[#151D19]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 truncate">
-                        <img src={mgr.avatar} alt={mgr.name} className="w-5 h-5 rounded-full object-cover" />
-                        <span className="truncate">{mgr.name}</span>
-                      </div>
-                      <span className="text-[10px] opacity-80 shrink-0 ml-1">
-                        {mgr.department.includes('Info') ? 'IT' : mgr.department.includes('RH') ? 'RH' : 'Maint.'}
-                      </span>
-                    </button>
-                  ))}
-                </div>
+              <div className="flex flex-col gap-1.5 pt-1">
+                {canAccessEmploye && onOpenEmployeeSpace && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      onOpenEmployeeSpace();
+                    }}
+                    className="w-full text-left px-2.5 py-2 rounded hover:bg-[#F3FBF5] text-[#173B3F] font-semibold flex items-center justify-between"
+                  >
+                    <span>Accéder à mon espace Employé</span>
+                    <span className="material-symbols-outlined text-sm">swap_horiz</span>
+                  </button>
+                )}
+
+                {onLogout && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      onLogout();
+                    }}
+                    className="w-full text-left px-2.5 py-2 rounded hover:bg-[#FDECEC] text-[#B42332] font-semibold flex items-center justify-between"
+                  >
+                    <span>Se déconnecter</span>
+                    <span className="material-symbols-outlined text-sm">logout</span>
+                  </button>
+                )}
               </div>
             </div>
           )}
         </div>
+
+        {onLogout && (
+          <button
+            type="button"
+            onClick={onLogout}
+            className="px-3 py-1.5 text-xs font-semibold text-[#202824] bg-[#F7F5F0] hover:bg-[#E5E0D8] border border-[#E5E0D8] rounded transition-colors whitespace-nowrap shrink-0 font-['DM_Sans']"
+          >
+            Se déconnecter
+          </button>
+        )}
       </div>
     </header>
   );

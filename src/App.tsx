@@ -83,55 +83,111 @@ import { TicketRegisterView } from './components/TicketRegisterView';
 import { InterventionHistoryView } from './components/InterventionHistoryView';
 import { DepartmentReportsView } from './components/DepartmentReportsView';
 import { ResponsibleSettingsView } from './components/ResponsibleSettingsView';
+import { EmployeeCareDashboard } from '@/components/employee-care-dashboard';
+import { AccessDeniedView } from './components/AccessDeniedView';
+import {
+  AUTH_MESSAGES,
+  AuthSession,
+  SESSION_STORAGE_KEY,
+  authenticateUser,
+  evaluateRouteAccess,
+  getDefaultPathForRoles,
+  getPathForWorkspaceView,
+  sessionToProfile,
+  verifyActiveSession,
+} from './utils/auth-logic';
 
-const DEMO_PROFILES: SessionProfile[] = [
-  {
-    id: 'prof-admin-multi',
-    fullName: 'Henri Rochefort',
-    email: 'admin@entreprise.com',
-    roleLabel: 'Administrateur (Habilité tous espaces)',
-    roles: ['ADMINISTRATEUR', 'RESPONSABLE', 'EMPLOYE'],
-    departmentName: 'Direction Générale & Gouvernance',
-  },
-  {
-    id: 'prof-admin-strict',
-    fullName: 'Henri Rochefort',
-    email: 'admin@entreprise.com',
-    roleLabel: 'Administrateur strict (Admin uniquement)',
-    roles: ['ADMINISTRATEUR'],
-    departmentName: 'Direction Générale & Gouvernance',
-  },
-  {
-    id: 'prof-resp-sophie',
-    fullName: 'Sophie Dubois',
-    email: 'sophie.dubois@entreprise.com',
-    roleLabel: 'Responsable IT (Resp. + Employé)',
-    roles: ['RESPONSABLE', 'EMPLOYE'],
-    departmentName: 'Pôle Informatique et Infrastructure',
-  },
-  {
-    id: 'prof-emp-paul',
-    fullName: 'Paul Martin',
-    email: 'paul.martin@entreprise.com',
-    roleLabel: 'Employé uniquement',
-    roles: ['EMPLOYE'],
-    departmentName: 'Comptabilité et Finances',
-  },
-];
+const EMPLOYEES_STORAGE_KEY = 'employeecare_employees_state_v1';
+const RESPONSABLES_STORAGE_KEY = 'employeecare_responsables_state_v1';
+
+function loadStoredJson<T>(key: string, fallback: T): T {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
 
 export default function App() {
-  // Top-level workspace selector: defaults to 'ADMIN' (Espace Administrateur)
-  const [activeWorkspace, setActiveWorkspace] = useState<'ADMIN' | 'RESPONSABLE' | 'LOGIN'>('ADMIN');
-  const [sessionProfile, setSessionProfile] = useState<SessionProfile>(DEMO_PROFILES[0]);
-
-  // Shared Enterprise Data State (Source de données commune)
-  const [employees, setEmployees] = useState<EmployeeAccount[]>(INITIAL_EMPLOYEES);
-  const [responsables, setResponsables] = useState<ResponsableAccount[]>(INITIAL_RESPONSABLES);
+  // Shared Enterprise Data State (Source de données commune, persistée en session/localStorage)
+  const [employees, setEmployees] = useState<EmployeeAccount[]>(() =>
+    loadStoredJson<EmployeeAccount[]>(EMPLOYEES_STORAGE_KEY, INITIAL_EMPLOYEES)
+  );
+  const [responsables, setResponsables] = useState<ResponsableAccount[]>(() =>
+    loadStoredJson<ResponsableAccount[]>(RESPONSABLES_STORAGE_KEY, INITIAL_RESPONSABLES)
+  );
   const [departments, setDepartments] = useState<DepartmentRecord[]>(INITIAL_DEPARTMENTS);
   const [categories, setCategories] = useState<CategoryAttribution[]>(INITIAL_CATEGORIES);
   const [adminEvents, setAdminEvents] = useState<AdminActivityEvent[]>(INITIAL_ADMIN_EVENTS);
   const [adminSettings, setAdminSettings] = useState<AdminCompanySettings>(INITIAL_ADMIN_SETTINGS);
   const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
+
+  // Persist employees & responsables so Admin status changes (e.g. account deactivation) survive page reloads
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(EMPLOYEES_STORAGE_KEY, JSON.stringify(employees));
+    } catch {
+      // ignore storage quota errors
+    }
+  }, [employees]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(RESPONSABLES_STORAGE_KEY, JSON.stringify(responsables));
+    } catch {
+      // ignore storage quota errors
+    }
+  }, [responsables]);
+
+  // Initial session recovery & verification
+  const [loginNotice, setLoginNotice] = useState<string | null>(null);
+  const [authSession, setAuthSession] = useState<AuthSession | null>(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw =
+        window.sessionStorage.getItem(SESSION_STORAGE_KEY) ||
+        window.localStorage.getItem(SESSION_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as AuthSession;
+      const initialEmps = loadStoredJson<EmployeeAccount[]>(
+        EMPLOYEES_STORAGE_KEY,
+        INITIAL_EMPLOYEES
+      );
+      const initialResps = loadStoredJson<ResponsableAccount[]>(
+        RESPONSABLES_STORAGE_KEY,
+        INITIAL_RESPONSABLES
+      );
+      const check = verifyActiveSession(parsed, initialEmps, initialResps);
+      if (!check.valid) {
+        window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        window.localStorage.removeItem(SESSION_STORAGE_KEY);
+        return null;
+      }
+      return check.updatedSession || parsed;
+    } catch {
+      return null;
+    }
+  });
+
+  // Current URL Pathname state for protected routing
+  const [currentPath, setCurrentPath] = useState<string>(() => {
+    if (typeof window === 'undefined') return '/login';
+    return window.location.pathname || '/';
+  });
+
+  const navigateToPath = (nextPath: string, replace: boolean = false) => {
+    if (typeof window !== 'undefined') {
+      if (replace) {
+        window.history.replaceState({ path: nextPath }, '', nextPath);
+      } else {
+        window.history.pushState({ path: nextPath }, '', nextPath);
+      }
+    }
+    setCurrentPath(nextPath);
+  };
 
   // Admin navigation & quick-action states
   const [adminView, setAdminView] = useState<AdminViewId>('dashboard');
@@ -140,6 +196,9 @@ export default function App() {
   const [openAddRespModal, setOpenAddRespModal] = useState(false);
   const [openCreateDeptModal, setOpenCreateDeptModal] = useState(false);
   const [adminTicketToReassign, setAdminTicketToReassign] = useState<Ticket | null>(null);
+
+  // Espace Employé active section
+  const [employeeSection, setEmployeeSection] = useState<string>('Accueil');
 
   // Espace Responsable State
   const [currentUser, setCurrentUser] = useState<ResponsibleUser>(CURRENT_MANAGER);
@@ -159,16 +218,123 @@ export default function App() {
   const [isAstreinteModalOpen, setIsAstreinteModalOpen] = useState(false);
   const [targetTicketForModal, setTargetTicketForModal] = useState<Ticket | null>(null);
 
-  // Synchronize document.title with the active workspace
+  // Synchronize ResponsibleUser when a Responsable logs in
   useEffect(() => {
-    if (activeWorkspace === 'ADMIN') {
+    if (!authSession) return;
+    if (authSession.roles.includes('RESPONSABLE')) {
+      const matchedMgr = AVAILABLE_MANAGERS.find(
+        (m) => m.name.toLowerCase() === authSession.fullName.toLowerCase()
+      );
+      if (matchedMgr) {
+        setCurrentUser(matchedMgr);
+      } else {
+        const respAccount = responsables.find(
+          (r) =>
+            r.id === authSession.responsableId ||
+            r.email.toLowerCase() === authSession.email.toLowerCase()
+        );
+        if (respAccount) {
+          const deptRecord = departments.find((d) => d.id === respAccount.departmentId);
+          setCurrentUser({
+            id: respAccount.id,
+            name: respAccount.fullName,
+            role: authSession.roleLabel || 'Responsable de Service',
+            department: respAccount.departmentName,
+            codeDepartment: deptRecord?.code || 'DIR-RESP-01',
+            clearanceLevel: respAccount.isConfidentialHab
+              ? 'Habilitation Confidentielle & RH'
+              : 'Habilitation Opérationnelle Service',
+            avatar:
+              respAccount.avatar ||
+              'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+          });
+        }
+      }
+    }
+  }, [authSession, responsables, departments]);
+
+  // Verify active session if employees or responsables change (e.g., if account gets deactivated)
+  useEffect(() => {
+    if (!authSession) return;
+    const verification = verifyActiveSession(authSession, employees, responsables);
+    if (!verification.valid) {
+      window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
+      window.localStorage.removeItem(SESSION_STORAGE_KEY);
+      setAuthSession(null);
+      if (verification.errorCode === 'ACCOUNT_DEACTIVATED') {
+        setLoginNotice(AUTH_MESSAGES.ACCOUNT_DEACTIVATED);
+      } else if (verification.errorCode === 'SESSION_EXPIRED') {
+        setLoginNotice(AUTH_MESSAGES.SESSION_EXPIRED);
+      }
+      navigateToPath('/login', true);
+    }
+  }, [employees, responsables, authSession]);
+
+  // Evaluate route protection and synchronize URL / sub-views
+  const routeEvaluation = useMemo(
+    () => evaluateRouteAccess(currentPath, authSession),
+    [currentPath, authSession]
+  );
+
+  useEffect(() => {
+    if (routeEvaluation.redirectPath && routeEvaluation.redirectPath !== currentPath) {
+      navigateToPath(routeEvaluation.redirectPath, true);
+      return;
+    }
+
+    if (routeEvaluation.allowed && routeEvaluation.subView) {
+      if (routeEvaluation.workspace === 'ADMIN') {
+        setAdminView(routeEvaluation.subView as AdminViewId);
+      } else if (routeEvaluation.workspace === 'RESPONSABLE') {
+        const view = routeEvaluation.subView;
+        if (view === 'to_treat' || view === 'in_progress' || view === 'resolved') {
+          setCurrentView('dashboard');
+          setActiveFilterTab(view);
+        } else {
+          setCurrentView(view);
+          if (view === 'dashboard') setActiveFilterTab('all');
+        }
+      } else if (routeEvaluation.workspace === 'EMPLOYE') {
+        setEmployeeSection(routeEvaluation.subView);
+      }
+    }
+  }, [routeEvaluation, currentPath]);
+
+  // Synchronize document.title with the active route/workspace
+  useEffect(() => {
+    if (!authSession || routeEvaluation.workspace === 'LOGIN') {
+      document.title = 'EmployeeCare — Connexion';
+    } else if (!routeEvaluation.allowed && routeEvaluation.reason === 'FORBIDDEN') {
+      document.title = 'EmployeeCare — Accès non autorisé';
+    } else if (routeEvaluation.workspace === 'ADMIN') {
       document.title = 'EmployeeCare — Espace Administrateur';
-    } else if (activeWorkspace === 'RESPONSABLE') {
+    } else if (routeEvaluation.workspace === 'RESPONSABLE') {
       document.title = 'EmployeeCare — Espace Responsable';
     } else {
-      document.title = 'EmployeeCare — Connexion';
+      document.title = 'EmployeeCare — Votre espace de dialogue';
     }
-  }, [activeWorkspace]);
+  }, [authSession, routeEvaluation]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname || '/');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const sessionProfile: SessionProfile = useMemo(() => {
+    if (authSession) {
+      return sessionToProfile(authSession);
+    }
+    return {
+      id: 'unauthenticated',
+      fullName: 'Utilisateur non connecté',
+      email: '',
+      roleLabel: 'Non connecté',
+      roles: [],
+    };
+  }, [authSession]);
 
   // Helper to log dated administrative activity
   const pushAdminEvent = (
@@ -473,37 +639,74 @@ export default function App() {
     );
   };
 
-  // Switch between workspaces respecting role permissions
-  const handleSwitchWorkspace = (workspace: 'ADMIN' | 'RESPONSABLE' | 'EMPLOYE' | 'LOGIN') => {
-    if (workspace === 'EMPLOYE') {
-      setIsEmployeePortalOpen(true);
-      return;
+  // Authentication & Session handlers
+  const handleAuthenticate = (email: string, password: string) => {
+    const result = authenticateUser(email, password, employees, responsables);
+    if (!result.success || !result.session) {
+      return {
+        success: false,
+        errorMessage: result.errorMessage,
+      };
     }
-    if (workspace === 'ADMIN' && !sessionProfile.roles.includes('ADMINISTRATEUR')) {
-      return;
+
+    try {
+      const serialized = JSON.stringify(result.session);
+      window.sessionStorage.setItem(SESSION_STORAGE_KEY, serialized);
+      window.localStorage.setItem(SESSION_STORAGE_KEY, serialized);
+    } catch {
+      // ignore storage quota errors
     }
-    if (workspace === 'RESPONSABLE' && !sessionProfile.roles.includes('RESPONSABLE')) {
-      return;
-    }
-    setActiveWorkspace(workspace);
+
+    setLoginNotice(null);
+    setAuthSession(result.session);
+    const targetPath = result.redirectPath || getDefaultPathForRoles(result.session.roles);
+    navigateToPath(targetPath, true);
+
+    return { success: true };
   };
 
-  // Dev mode profile switcher
-  const handleSelectDemoProfile = (profileId: string) => {
-    const found = DEMO_PROFILES.find((p) => p.id === profileId);
-    if (!found) return;
-    setSessionProfile(found);
-
-    if (found.roles.includes('ADMINISTRATEUR')) {
-      setActiveWorkspace('ADMIN');
-    } else if (found.roles.includes('RESPONSABLE')) {
-      setActiveWorkspace('RESPONSABLE');
-      const mgr = AVAILABLE_MANAGERS.find((m) => m.name === found.fullName);
-      if (mgr) setCurrentUser(mgr);
-    } else {
-      setActiveWorkspace('RESPONSABLE');
-      setIsEmployeePortalOpen(true);
+  const handleLogout = () => {
+    try {
+      window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
+      window.localStorage.removeItem(SESSION_STORAGE_KEY);
+    } catch {
+      // ignore storage errors
     }
+    setAuthSession(null);
+    setLoginNotice(null);
+    navigateToPath('/login', true);
+  };
+
+  // Switch between workspaces respecting verified role permissions
+  const handleSwitchWorkspace = (workspace: 'ADMIN' | 'RESPONSABLE' | 'EMPLOYE' | 'LOGIN') => {
+    if (workspace === 'LOGIN') {
+      handleLogout();
+      return;
+    }
+    if (!authSession) {
+      navigateToPath('/login', true);
+      return;
+    }
+    if (workspace === 'ADMIN' && !authSession.roles.includes('ADMINISTRATEUR')) {
+      navigateToPath('/admin');
+      return;
+    }
+    if (workspace === 'RESPONSABLE' && !authSession.roles.includes('RESPONSABLE')) {
+      navigateToPath('/responsable');
+      return;
+    }
+    if (workspace === 'EMPLOYE' && !authSession.roles.includes('EMPLOYE')) {
+      navigateToPath('/employe');
+      return;
+    }
+
+    const nextPath = getPathForWorkspaceView(workspace);
+    navigateToPath(nextPath);
+  };
+
+  const handleAdminNavigate = (view: AdminViewId) => {
+    setAdminView(view);
+    navigateToPath(getPathForWorkspaceView('ADMIN', view));
   };
 
   // Espace Responsable derived data & handlers
@@ -551,6 +754,7 @@ export default function App() {
       }
     }
     setMobileDetailViewOpen(false);
+    navigateToPath(getPathForWorkspaceView('RESPONSABLE', view));
   };
 
   const handleSelectTicket = (ticket: Ticket) => {
@@ -648,65 +852,64 @@ export default function App() {
     setMobileDetailViewOpen(true);
   };
 
-  const handleSelectManager = (newManager: ResponsibleUser) => {
-    setCurrentUser(newManager);
-    setActiveFilterTab('all');
-    setSearchQuery('');
-  };
-
-  // RENDER 1: PAGE DE CONNEXION (Sans aucune inscription publique)
-  if (activeWorkspace === 'LOGIN') {
+  // RENDER 1: PAGE DE CONNEXION UNIQUE (Point d'entrée obligatoire si non authentifié)
+  if (!authSession || routeEvaluation.workspace === 'LOGIN') {
     return (
-      <>
-        <LoginView
-          employees={employees}
-          onLoginSuccess={(target, email) => {
-            const norm = email.trim().toLowerCase();
-            if (target === 'ADMIN') {
-              setSessionProfile(DEMO_PROFILES[0]);
-              setActiveWorkspace('ADMIN');
-            } else if (target === 'RESPONSABLE') {
-              const foundEmp = employees.find((e) => e.email.toLowerCase() === norm);
-              setSessionProfile({
-                id: foundEmp?.id || 'prof-resp',
-                fullName: foundEmp?.fullName || 'Sophie Dubois',
-                email: norm,
-                roleLabel: 'Responsable (Resp. + Employé)',
-                roles: ['RESPONSABLE', 'EMPLOYE'],
-                departmentName: foundEmp?.departmentName,
-              });
-              setActiveWorkspace('RESPONSABLE');
-            } else {
-              const foundEmp = employees.find((e) => e.email.toLowerCase() === norm);
-              setSessionProfile({
-                id: foundEmp?.id || 'prof-emp',
-                fullName: foundEmp?.fullName || 'Paul Martin',
-                email: norm,
-                roleLabel: 'Employé',
-                roles: ['EMPLOYE'],
-                departmentName: foundEmp?.departmentName,
-              });
-              setActiveWorkspace('RESPONSABLE');
-              setIsEmployeePortalOpen(true);
-            }
-          }}
-        />
-        <EmployeePortalModal
-          isOpen={isEmployeePortalOpen}
-          onClose={() => setIsEmployeePortalOpen(false)}
-          currentUser={currentUser}
-        />
-      </>
+      <LoginView
+        companyName={adminSettings.companyName}
+        initialNotice={loginNotice}
+        onAuthenticate={handleAuthenticate}
+      />
     );
   }
 
-  // RENDER 2: ESPACE ADMINISTRATEUR
-  if (activeWorkspace === 'ADMIN') {
+  // RENDER 2: ACCÈS NON AUTORISÉ (Utilisateur authentifié tentant d'accéder à un espace hors de son rôle)
+  if (!routeEvaluation.allowed && routeEvaluation.reason === 'FORBIDDEN') {
+    return (
+      <AccessDeniedView
+        session={authSession}
+        attemptedPath={currentPath}
+        onReturnToAllowedSpace={(targetPath) => navigateToPath(targetPath)}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  // RENDER 3: ESPACE EMPLOYÉ
+  if (routeEvaluation.workspace === 'EMPLOYE') {
+    return (
+      <EmployeeCareDashboard
+        userName={authSession.fullName}
+        userEmail={authSession.email}
+        activeSection={employeeSection}
+        onSectionChange={(section) => {
+          setEmployeeSection(section);
+          if (
+            section === 'Accueil' ||
+            section === 'Mes signalements' ||
+            section === 'Créer un signalement' ||
+            section === 'Ressources'
+          ) {
+            navigateToPath(getPathForWorkspaceView('EMPLOYE', section));
+          }
+        }}
+        onReturnToResponsable={
+          authSession.roles.includes('RESPONSABLE')
+            ? () => navigateToPath('/responsable')
+            : undefined
+        }
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  // RENDER 4: ESPACE ADMINISTRATEUR
+  if (routeEvaluation.workspace === 'ADMIN') {
     return (
       <div className="min-h-screen bg-[#F7F5F0] text-[#202824] flex font-['DM_Sans']">
         <AdminSidebar
           currentView={adminView}
-          onNavigate={setAdminView}
+          onNavigate={handleAdminNavigate}
           stats={adminStats}
           sessionProfile={sessionProfile}
           onSwitchWorkspace={handleSwitchWorkspace}
@@ -719,10 +922,9 @@ export default function App() {
             currentView={adminView}
             companyName={adminSettings.companyName}
             sessionProfile={sessionProfile}
-            availableDemoProfiles={DEMO_PROFILES}
-            onSelectDemoProfile={handleSelectDemoProfile}
             onOpenMobileMenu={() => setIsAdminMobileOpen(true)}
             onSwitchWorkspace={handleSwitchWorkspace}
+            onLogout={handleLogout}
           />
 
           <main className="p-4 lg:p-8 flex-1 flex flex-col gap-6 max-w-[1600px] w-full mx-auto">
@@ -732,22 +934,22 @@ export default function App() {
                 events={adminEvents}
                 tickets={tickets}
                 categories={categories}
-                onNavigate={setAdminView}
+                onNavigate={handleAdminNavigate}
                 onQuickAddEmployee={() => {
                   setOpenAddEmpModal(true);
-                  setAdminView('employees');
+                  handleAdminNavigate('employees');
                 }}
                 onQuickAddResponsable={() => {
                   setOpenAddRespModal(true);
-                  setAdminView('responsables');
+                  handleAdminNavigate('responsables');
                 }}
                 onQuickCreateDepartment={() => {
                   setOpenCreateDeptModal(true);
-                  setAdminView('departments');
+                  handleAdminNavigate('departments');
                 }}
                 onReassignTicket={(ticket) => {
                   setAdminTicketToReassign(ticket);
-                  setAdminView('signalements');
+                  handleAdminNavigate('signalements');
                 }}
               />
             )}
@@ -849,7 +1051,7 @@ export default function App() {
     );
   }
 
-  // RENDER 3: ESPACE RESPONSABLE (Conserve intégralement l'interface validée)
+  // RENDER 5: ESPACE RESPONSABLE (Conserve intégralement l'interface validée)
   return (
     <div className="min-h-screen bg-[#F7F5F0] text-[#151D19] flex font-['DM_Sans']">
       {/* 1. Left Navigation Sidebar (8 Items) */}
@@ -858,24 +1060,23 @@ export default function App() {
         onNavigate={handleNavigate}
         currentUser={currentUser}
         metrics={metrics}
-        onOpenEmployeeSpace={() => setIsEmployeePortalOpen(true)}
+        onOpenEmployeeSpace={() => handleSwitchWorkspace('EMPLOYE')}
+        onLogout={handleLogout}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
       {/* Main Layout Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* 2. Top Header with role-based navigation + Dev Mode switcher */}
+        {/* 2. Top Header with role-based navigation */}
         <ResponsibleHeader
           currentUser={currentUser}
           unreadCount={metrics.toTreat}
           sessionProfile={sessionProfile}
-          availableDemoProfiles={DEMO_PROFILES}
-          onSelectDemoProfile={handleSelectDemoProfile}
           onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
-          onSelectManager={handleSelectManager}
-          onSwitchToAdmin={() => setActiveWorkspace('ADMIN')}
-          onOpenEmployeeSpace={() => setIsEmployeePortalOpen(true)}
+          onSwitchToAdmin={() => handleSwitchWorkspace('ADMIN')}
+          onOpenEmployeeSpace={() => handleSwitchWorkspace('EMPLOYE')}
+          onLogout={handleLogout}
         />
 
         {/* 3. Main Workspace Container */}

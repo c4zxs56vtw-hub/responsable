@@ -6,10 +6,9 @@ interface AdminHeaderProps {
   currentView: AdminViewId;
   companyName: string;
   sessionProfile: SessionProfile;
-  availableDemoProfiles: SessionProfile[];
-  onSelectDemoProfile: (profileId: string) => void;
   onOpenMobileMenu: () => void;
   onSwitchWorkspace: (workspace: 'ADMIN' | 'RESPONSABLE' | 'EMPLOYE' | 'LOGIN') => void;
+  onLogout: () => void;
 }
 
 const VIEW_LABELS: Record<AdminViewId, string> = {
@@ -25,14 +24,11 @@ const VIEW_LABELS: Record<AdminViewId, string> = {
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({
   currentView,
-  companyName,
   sessionProfile,
-  availableDemoProfiles,
-  onSelectDemoProfile,
   onOpenMobileMenu,
   onSwitchWorkspace,
+  onLogout,
 }) => {
-  const canAccessAdmin = sessionProfile.roles.includes('ADMINISTRATEUR');
   const canAccessResponsable = sessionProfile.roles.includes('RESPONSABLE');
   const canAccessEmploye = sessionProfile.roles.includes('EMPLOYE');
 
@@ -53,73 +49,45 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           <span className="font-semibold text-[#173B3F] whitespace-nowrap">
             EmployeeCare — Espace Administrateur
           </span>
-          <span aria-hidden="true" className="hidden 2xl:inline shrink-0">/</span>
-          <span className="font-semibold text-[#202824] truncate hidden 2xl:inline">
+          <span aria-hidden="true" className="hidden md:inline shrink-0">
+            /
+          </span>
+          <span className="font-semibold text-[#202824] truncate hidden md:inline">
             {VIEW_LABELS[currentView]}
           </span>
         </div>
       </div>
 
-      {/* Zone 2: Navigation stricte selon les rôles de l'utilisateur connecté */}
-      <nav
-        className="hidden md:flex items-center gap-4 text-[13px] font-medium text-[#66736F] shrink-0"
-        aria-label="Espaces autorisés selon le rôle"
-      >
-        {canAccessAdmin && (
-          <button
-            type="button"
-            onClick={() => onSwitchWorkspace('ADMIN')}
-            className="text-[#173B3F] font-bold underline underline-offset-4 whitespace-nowrap shrink-0"
-          >
-            Espace Administrateur
-          </button>
-        )}
+      {/* Zone 2: Profil connecté, accès multi-rôles éventuels & Déconnexion */}
+      <div className="flex items-center gap-3 shrink-0">
         {canAccessResponsable && (
           <button
             type="button"
             onClick={() => onSwitchWorkspace('RESPONSABLE')}
-            className="hover:text-[#173B3F] transition-colors whitespace-nowrap shrink-0"
+            className="hidden md:inline-flex px-3 py-1.5 rounded bg-[#F7F5F0] hover:bg-[#E5E0D8] border border-[#E5E0D8] text-xs font-semibold text-[#173B3F] transition-colors whitespace-nowrap"
           >
             Espace Responsable
           </button>
         )}
+
         {canAccessEmploye && (
           <button
             type="button"
             onClick={() => onSwitchWorkspace('EMPLOYE')}
-            className="hover:text-[#173B3F] transition-colors whitespace-nowrap shrink-0"
+            className="hidden md:inline-flex px-3 py-1.5 rounded bg-[#F7F5F0] hover:bg-[#E5E0D8] border border-[#E5E0D8] text-xs font-semibold text-[#202824] transition-colors whitespace-nowrap"
           >
-            Mon Espace Employé
+            Mon espace Employé
           </button>
         )}
-      </nav>
 
-      {/* Zone 3: Sélecteur de profils réservé au Mode Développement + Déconnexion */}
-      <div className="flex items-center gap-2 shrink-0">
-        <div
-          className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded bg-[#F7F5F0] border border-[#E5E0D8] text-xs"
-          title="Sélecteur de profil réservé uniquement au mode développement / démonstration (les autorisations réelles sont vérifiées côté serveur Spring Boot)"
-        >
-          <span className="font-['JetBrains_Mono'] text-[10px] uppercase font-bold text-[#A86412] px-1 py-0.5 bg-[#FFF8EB] rounded border border-[#A86412]/30 shrink-0">
-            Mode Démo
-          </span>
-          <select
-            aria-label="Sélecteur de profil (Mode développement)"
-            value={sessionProfile.id}
-            onChange={(e) => onSelectDemoProfile(e.target.value)}
-            className="bg-transparent text-xs font-semibold text-[#202824] focus:outline-none cursor-pointer max-w-[140px] truncate"
-          >
-            {availableDemoProfiles.map((prof) => (
-              <option key={prof.id} value={prof.id}>
-                {prof.fullName} — {prof.roleLabel}
-              </option>
-            ))}
-          </select>
+        <div className="hidden sm:flex items-center gap-2 text-xs text-[#66736F] pr-1">
+          <span className="w-2 h-2 rounded-full bg-[#287A55]" />
+          <span className="font-semibold text-[#202824]">{sessionProfile.fullName}</span>
         </div>
 
         <button
           type="button"
-          onClick={() => onSwitchWorkspace('LOGIN')}
+          onClick={onLogout}
           className="px-3.5 py-1.5 text-xs font-semibold text-[#202824] bg-[#F7F5F0] hover:bg-[#E5E0D8] border border-[#E5E0D8] rounded transition-colors whitespace-nowrap shrink-0"
         >
           Se déconnecter

@@ -7,6 +7,7 @@ interface ResponsibleSidebarProps {
   currentUser: ResponsibleUser;
   metrics: OperationalMetrics;
   onOpenEmployeeSpace: () => void;
+  onLogout?: () => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
 }
@@ -17,6 +18,7 @@ export const ResponsibleSidebar: React.FC<ResponsibleSidebarProps> = ({
   currentUser,
   metrics,
   onOpenEmployeeSpace,
+  onLogout,
   isMobileOpen = false,
   onCloseMobile,
 }) => {
@@ -167,8 +169,8 @@ export const ResponsibleSidebar: React.FC<ResponsibleSidebarProps> = ({
         </div>
       </div>
 
-      {/* Footer / Switch to Employee Portal Button */}
-      <div className="px-4 flex flex-col gap-3">
+      {/* Footer / Switch to Employee Portal & Logout */}
+      <div className="px-4 flex flex-col gap-2">
         <div className="p-2.5 rounded bg-[#EDF6EF] border border-[#E5E0D8] flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[#146C48]"></div>
           <div className="flex flex-col text-[11px]">
@@ -186,7 +188,7 @@ export const ResponsibleSidebar: React.FC<ResponsibleSidebarProps> = ({
             onOpenEmployeeSpace();
             if (onCloseMobile) onCloseMobile();
           }}
-          className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded bg-[#E7F0E9] hover:bg-[#DCE5DE] text-[#002529] font-medium text-xs transition-colors border border-[#C1C8C9]/50 shadow-xs font-['DM_Sans']"
+          className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-[#E7F0E9] hover:bg-[#DCE5DE] text-[#002529] font-medium text-xs transition-colors border border-[#C1C8C9]/50 shadow-xs font-['DM_Sans']"
           title="Accéder à votre espace personnel pour signaler un problème"
         >
           <span className="material-symbols-outlined text-base">
@@ -194,6 +196,22 @@ export const ResponsibleSidebar: React.FC<ResponsibleSidebarProps> = ({
           </span>
           <span>Accéder à mon espace Employé</span>
         </button>
+
+        {onLogout && (
+          <button
+            type="button"
+            onClick={() => {
+              onLogout();
+              if (onCloseMobile) onCloseMobile();
+            }}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-white hover:bg-[#FDECEC] text-[#B42332] font-semibold text-xs transition-colors border border-[#E5E0D8] font-['DM_Sans']"
+          >
+            <span className="material-symbols-outlined text-sm">
+              logout
+            </span>
+            <span>Se déconnecter</span>
+          </button>
+        )}
       </div>
     </div>
   );
