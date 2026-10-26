@@ -893,6 +893,52 @@ export default function App() {
             navigateToPath(getPathForWorkspaceView('EMPLOYE', section));
           }
         }}
+        onCreateSignalement={(payload) => {
+          const now = new Date();
+          const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const newTicket: Ticket = {
+            id: `ticket-${payload.id.toLowerCase()}-${Date.now()}`,
+            reference: payload.id,
+            title: payload.title,
+            description: payload.description,
+            category: (payload.category as Ticket['category']) || 'Conditions de travail',
+            priority: payload.confidentiality === 'confidentiel' ? 'HAUTE' : 'MOYENNE',
+            status: 'NOUVEAU',
+            requesterName:
+              payload.confidentiality === 'anonyme'
+                ? 'Collaborateur anonyme'
+                : authSession.fullName,
+            requesterRole: authSession.roleLabel || 'Collaborateur',
+            requesterDepartment: authSession.departmentName || 'Opérations',
+            requesterEmail:
+              payload.confidentiality === 'anonyme' ? 'anonyme@entreprise.com' : authSession.email,
+            requesterPhone: 'Interne',
+            location: 'Siège',
+            targetDepartment: authSession.departmentName || 'Ressources Humaines & QVT',
+            assignedTo: null,
+            createdAt: now.toISOString(),
+            updatedAt: now.toISOString(),
+            slaDeadline: '48h00',
+            isConfidential: payload.confidentiality !== 'ordinaire',
+            messages: [],
+            timeline: [
+              {
+                id: `tl-${Date.now()}`,
+                time: timeStr,
+                timestamp: now.toISOString(),
+                title: 'Signalement transmis depuis l’espace Employé',
+                description: payload.description,
+                author:
+                  payload.confidentiality === 'anonyme'
+                    ? 'Collaborateur anonyme'
+                    : authSession.fullName,
+                type: 'creation',
+                newStatus: 'NOUVEAU',
+              },
+            ],
+          };
+          handleAddTicket(newTicket);
+        }}
         onReturnToResponsable={
           authSession.roles.includes('RESPONSABLE')
             ? () => navigateToPath('/responsable')
