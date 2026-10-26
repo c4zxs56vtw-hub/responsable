@@ -1,0 +1,6 @@
+{
+  "name": "EmployeeCare — Espace Responsable",
+  "description": "Console de médiation et supervision des signalements d'incidents et requêtes collaborateurs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

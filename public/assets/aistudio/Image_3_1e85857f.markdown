@@ -1,0 +1,230 @@
+---
+name: L'Atelier Confidentiel
+colors:
+  surface: '#f3fbf5'
+  surface-dim: '#d3dcd6'
+  surface-bright: '#f3fbf5'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#edf6ef'
+  surface-container: '#e7f0e9'
+  surface-container-high: '#e2eae4'
+  surface-container-highest: '#dce5de'
+  on-surface: '#151d19'
+  on-surface-variant: '#414849'
+  inverse-surface: '#2a322e'
+  inverse-on-surface: '#eaf3ec'
+  outline: '#717879'
+  outline-variant: '#c1c8c9'
+  surface-tint: '#416468'
+  primary: '#002529'
+  on-primary: '#ffffff'
+  primary-container: '#173b3f'
+  on-primary-container: '#81a5aa'
+  inverse-primary: '#a9cdd2'
+  secondary: '#146c48'
+  on-secondary: '#ffffff'
+  secondary-container: '#a2f4c6'
+  on-secondary-container: '#1d724e'
+  tertiary: '#341a00'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#522d00'
+  on-tertiary-container: '#db8d3c'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#c4e9ee'
+  primary-fixed-dim: '#a9cdd2'
+  on-primary-fixed: '#001f23'
+  on-primary-fixed-variant: '#294c50'
+  secondary-fixed: '#a2f4c6'
+  secondary-fixed-dim: '#87d7ab'
+  on-secondary-fixed: '#002112'
+  on-secondary-fixed-variant: '#005234'
+  tertiary-fixed: '#ffdcbf'
+  tertiary-fixed-dim: '#ffb873'
+  on-tertiary-fixed: '#2d1600'
+  on-tertiary-fixed-variant: '#6a3b00'
+  background: '#f3fbf5'
+  on-background: '#151d19'
+  surface-variant: '#dce5de'
+typography:
+  display-lg:
+    fontFamily: DM Serif Display
+    fontSize: 40px
+    fontWeight: '400'
+    lineHeight: 48px
+  display-lg-mobile:
+    fontFamily: DM Serif Display
+    fontSize: 30px
+    fontWeight: '400'
+    lineHeight: 38px
+  headline-lg:
+    fontFamily: DM Serif Display
+    fontSize: 28px
+    fontWeight: '400'
+    lineHeight: 36px
+  headline-md:
+    fontFamily: DM Serif Display
+    fontSize: 22px
+    fontWeight: '400'
+    lineHeight: 30px
+  title-lg:
+    fontFamily: DM Sans
+    fontSize: 18px
+    fontWeight: '600'
+    lineHeight: 26px
+  title-md:
+    fontFamily: DM Sans
+    fontSize: 15px
+    fontWeight: '600'
+    lineHeight: 22px
+  body-lg:
+    fontFamily: DM Sans
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: 24px
+  body-md:
+    fontFamily: DM Sans
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: 20px
+  body-sm:
+    fontFamily: DM Sans
+    fontSize: 12px
+    fontWeight: '400'
+    lineHeight: 18px
+  mono-code:
+    fontFamily: JetBrains Mono
+    fontSize: 13px
+    fontWeight: '500'
+    lineHeight: 18px
+    letterSpacing: -0.01em
+  mono-badge:
+    fontFamily: JetBrains Mono
+    fontSize: 11px
+    fontWeight: '500'
+    lineHeight: 14px
+    letterSpacing: 0.02em
+rounded:
+  sm: 0.125rem
+  DEFAULT: 0.25rem
+  md: 0.375rem
+  lg: 0.5rem
+  xl: 0.75rem
+  full: 9999px
+spacing:
+  gutter: 1.25rem
+  gutter-lg: 2rem
+  margin: 1.5rem
+  margin-lg: 3rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 1rem
+  space-lg: 1.5rem
+  space-xl: 2.5rem
+---
+
+## Brand & Style
+
+This design system establishes a sanctuary of trust, discretion, and operational rigor for employee care and case management. Balancing the emotional sensitivity required for personal grievances with the decisive efficiency needed by case handlers, the visual language marries humanistic editorial dignity with clean institutional utility.
+
+The aesthetic fuses **Tactile Editorial Warmth** with **Modern Operational Utility**:
+- **Atmospheric Reassurance:** An intimate, calm atmosphere achieved through warm ivory backdrops and deliberate typography, stripping away sterile corporate bureaucracy.
+- **Precision Architecture:** Razor-sharp 1px dividers, structured data tables, and strict typographic hierarchy that instill confidence and clarity under stress.
+- **Confidential Hierarchy:** Immediate visual cues distinguishing disclosure levels (Identified, Confidential, Anonymous), protecting psychological safety while maintaining operational compliance.
+
+## Colors
+
+The chromatic architecture relies on organic, deeply grounded tones that signal competence, tranquility, and unambiguous status tracking.
+
+### Core Palette
+- **Primary / Authority (`#173B3F` - Deep Petrol):** Represents systemic stability, authority, and discretion. Applied to key navigation anchors, primary actions, and top-tier headers.
+- **Main Canvas (`#F7F5F0` - Warm Calming Ivory):** Replaces harsh stark whites with a comforting, non-clinical background that reduces cognitive strain during long or emotionally intense sessions.
+- **Card & Surface Layers:** 
+  - Pure White (`#FFFFFF`) for elevated cards, active inputs, and interactive surfaces.
+  - Deep Ivory (`#EFECE4`) for side panels, inactive containers, structural toolbars, and table headers.
+- **Typography & Details:**
+  - Ink Charcoal (`#202824`) for body copy and headlines, guaranteeing strict WCAG AAA contrast ratios.
+  - Sage Slate Mineral (`#66736F`) for metadata, subheadings, hints, and passive timestamps.
+  - Warm Skim Divider (`#E5E0D8`) for structural hairline rules and card borders.
+
+### Functional Status Indicators
+Functional accents remain restrained and deliberate, avoiding saturated panic states:
+- **Resolution / Validated (`#287A55` - Remedy Green):** Reassurance, completed reviews, and positive progress. Paired with 10% alpha tints for badge fills.
+- **Attention / Pending (`#A86412` - Vigilance Amber):** Awaiting documentation, reassignment, or temporal caution.
+- **Critical / Urgent (`#B42332` - Measured Alert Red):** High-severity escalation, regulatory breach, or immediate safety concern.
+
+## Typography
+
+The typographic hierarchy balances literary dignity with functional operational legibility.
+
+- **Editorial Headings (`DM Serif Display`):** Reserved for welcoming moments, landing intros, major section headers, and intake confirmation steps. It provides human connection, empathy, and gravity.
+- **Operational Interface (`DM Sans`):** Powers all system infrastructure: form inputs, card contents, interactive controls, data rows, and contextual helpers. Highly legible at compact sizes with a neutral, reassuring cadence.
+- **Technical Precision (`JetBrains Mono`):** Applied strictly to ticket references (e.g., `#TK-84920`), ISO timestamps, encrypted audit signatures, and confidentiality status tags. It communicates systemic security, tracking accuracy, and operational integrity.
+
+## Layout & Spacing
+
+Layouts follow an asymmetric dual rhythm: spacious, breathable flow for employee-facing intake paths, paired with dense, information-rich multi-column panes for back-office case officers.
+
+### Grid & Canvas Structure
+- **Desktop (>= 1280px):** 12-column layout with fixed 280px operational navigation on the left, an adaptive primary workspace (margins `3rem`, gutters `2rem`), and an optional 360px contextual review panel on the right.
+- **Tablet (768px - 1279px):** 8-column layout with collapsable drawer navigation and stacked ancillary panels.
+- **Mobile (< 768px):** 4-column fluid layout with `1.5rem` outer margins. Intake forms adapt into sequential, single-question card stacks to maintain focus and prevent cognitive overload.
+
+### Structural Flow
+Density is modulated by user mode:
+- **Intake & Reporting View:** Uses generous vertical gaps (`space-xl`) between questions to maintain a therapeutic, pressure-free pace.
+- **Case Management Console:** Compresses rows with tighter padding (`space-sm` to `space-md`), leveraging precise hairline borders to maintain scanability across dense datasets without visual clutter.
+
+## Elevation & Depth
+
+This design system avoids heavy drop shadows, blurred glows, and simulated 3D dimensionality. Instead, it relies on an architectural **Flat Precision Hierarchy** composed of tonal layering and delicate lines.
+
+- **Borders & Dividers:** Visual separation is driven entirely by 1px solid borders in `#E5E0D8`. Cards, table rows, sidebars, and input groups use this hairline rule for clean containment.
+- **Surface Layering:**
+  - **Base Foundation:** `#F7F5F0` (Ivory canvas).
+  - **Layer 1 (Contained Working Areas):** `#FFFFFF` surfaces nested over the ivory canvas with 1px `#E5E0D8` perimeters.
+  - **Layer 2 (Header toolbars, inactive tabs, table columns):** `#EFECE4`.
+- **Restrained Overlay Shadow:** For transient popovers, modal dialogues, and dropdown panels, depth is signaled via a subtle, tinted outline accompanied by a soft, highly diffused ambient layer:
+  `box-shadow: 0 4px 16px -2px rgba(23, 59, 63, 0.08), 0 0 0 1px #E5E0D8;`
+
+## Shapes
+
+The shape vocabulary uses moderate, disciplined radiuses (4px to 6px) to reinforce precision, sobriety, and institutional trust.
+
+- **Base Radius (`0.25rem` / 4px):** Standard across all discrete controls—input boxes, textareas, status badges, buttons, tooltips, and table row groupings.
+- **Container Radius (`0.375rem` - `0.5rem` / 6px - 8px):** Applied to top-level cards, case files, modal windows, and intake card envelopes.
+- **Prohibited:** Full pill shapes (`rounded-full`) are strictly reserved for circular avatar frames or status indicator dots. Interactive pills are prohibited to maintain a deliberate, formal document aesthetic.
+
+## Components
+
+### Buttons
+- **Primary:** Solid `#173B3F` background, white `#FFFFFF` text, `border: 1px solid #173B3F`, 4px radius. On hover: `#1F4A4F`. Active: `#112C30`.
+- **Secondary / Ghost:** Transparent background with `border: 1px solid #E5E0D8`, text `#202824`. On hover: surface transitions to `#EFECE4` with border `#66736F`.
+- **Critical Action:** Background `#FFFFFF`, `border: 1px solid #B42332`, text `#B42332`. Hover: `#B42332` fill with `#FFFFFF` text.
+
+### Badges & Status Indicators
+Badges structure data using a combination of a 6px status dot or SVG stroke icon, `JetBrains Mono` text, and a tinted background:
+- **Resolution / Closed:** Background `#287A55` at 8% opacity, text and icon `#287A55`, border `rgba(40, 122, 85, 0.2)`.
+- **In Review / Attention:** Background `#A86412` at 8% opacity, text and icon `#A86412`, border `rgba(168, 100, 18, 0.2)`.
+- **Critical / Expedited:** Background `#B42332` at 8% opacity, text and icon `#B42332`, border `rgba(180, 35, 50, 0.2)`.
+
+### Confidentiality Level Selectors
+Specialized tri-state component used during intake and ticket triage:
+- **Options:** *Nominatif (Identified)*, *Confidentiel (HR/Mediator Only)*, *Anonyme (Encrypted Hash)*.
+- **Visuals:** Presented as a unified 3-segment horizontal card selector. The active choice gains a 1px border in `#173B3F`, a subtle background tint (`#EFECE4`), and a secure badge icon confirming disclosure limits.
+
+### Forms & Input Fields
+- **Default State:** Background `#FFFFFF`, border `1px solid #E5E0D8`, text `#202824`, radius 4px, vertical padding `0.625rem`, horizontal padding `0.875rem`.
+- **Focus State:** Border color `#173B3F` accompanied by a non-offset outline `0 0 0 1px #173B3F`.
+- **Contextual Guidance:** Inline helper text in `#66736F` sits below the input with an optional discreet security shield icon detailing why this information is collected and who has read access.
+
+### Operational Data Tables
+- **Header:** Background `#EFECE4`, text `#66736F` in uppercase 11px `DM Sans` with `letter-spacing: 0.05em`. Hairline bottom border `1px solid #E5E0D8`.
+- **Rows:** Alternating clean white surfaces (`#FFFFFF`) with bottom borders `1px solid #E5E0D8`. Hover state highlights row in `#F7F5F0`.
+- **Ticket ID Cell:** Styled with `JetBrains Mono` `#173B3F` font for swift scanning.
+
+### Cards & Panels
+- **Structure:** White container on ivory canvas with 1px `#E5E0D8` border and 6px radius.
+- **Card Header:** Distinct separation using an `#EFECE4` sub-surface bar or an internal hairline divider line, grouping case title, timestamp, and confidentiality tags cleanly.

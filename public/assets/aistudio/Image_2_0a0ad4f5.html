@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><title>EmployeeCare — Console Responsable</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=DM+Serif+Display:ital@0;1&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-lowest":"#ffffff","on-primary-container":"#81a5aa","surface-tint":"#416468","error-container":"#ffdad6","on-secondary-fixed-variant":"#005234","on-primary":"#ffffff","on-tertiary-fixed-variant":"#6a3b00","secondary-fixed":"#a2f4c6","inverse-on-surface":"#eaf3ec","on-tertiary-container":"#db8d3c","on-error":"#ffffff","primary-fixed":"#c4e9ee","on-tertiary":"#ffffff","on-secondary-fixed":"#002112","on-primary-fixed":"#001f23","on-secondary":"#ffffff","surface-container-highest":"#dce5de","on-surface-variant":"#414849","background":"#f3fbf5","on-surface":"#151d19","surface-dim":"#d3dcd6","primary":"#002529","secondary-fixed-dim":"#87d7ab","on-secondary-container":"#1d724e","tertiary-fixed":"#ffdcbf","secondary-container":"#a2f4c6","on-primary-fixed-variant":"#294c50","inverse-surface":"#2a322e","on-background":"#151d19","tertiary-container":"#522d00","surface-variant":"#dce5de","tertiary-fixed-dim":"#ffb873","primary-container":"#173b3f","on-error-container":"#93000a","surface-container-low":"#edf6ef","inverse-primary":"#a9cdd2","secondary":"#146c48","outline-variant":"#c1c8c9","surface":"#f3fbf5","error":"#ba1a1a","primary-fixed-dim":"#a9cdd2","tertiary":"#341a00","surface-container":"#e7f0e9","surface-container-high":"#e2eae4","on-tertiary-fixed":"#2d1600","surface-bright":"#f3fbf5","outline":"#717879"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter-lg":"2rem","space-lg":"1.5rem","space-md":"1rem","space-sm":"0.5rem","space-xs":"0.25rem","space-xl":"2.5rem","gutter":"1.25rem","margin":"1.5rem","margin-lg":"3rem"},"fontFamily":{"headline-lg":["DM Serif Display"],"body-lg":["DM Sans"],"mono-badge":["JetBrains Mono"],"body-md":["DM Sans"],"display-lg":["DM Serif Display"],"mono-code":["JetBrains Mono"],"title-md":["DM Sans"],"headline-md":["DM Serif Display"],"title-lg":["DM Sans"],"body-sm":["DM Sans"],"display-lg-mobile":["DM Serif Display"]},"fontSize":{"headline-lg":["28px",{"lineHeight":"36px","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"mono-badge":["11px",{"lineHeight":"14px","letterSpacing":"0.02em","fontWeight":"500"}],"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"display-lg":["40px",{"lineHeight":"48px","fontWeight":"400"}],"mono-code":["13px",{"lineHeight":"18px","letterSpacing":"-0.01em","fontWeight":"500"}],"title-md":["15px",{"lineHeight":"22px","fontWeight":"600"}],"headline-md":["22px",{"lineHeight":"30px","fontWeight":"400"}],"title-lg":["18px",{"lineHeight":"26px","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"display-lg-mobile":["30px",{"lineHeight":"38px","fontWeight":"400"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between py-space-lg"><div class="flex flex-col gap-space-lg"><div class="px-space-lg flex items-center gap-space-sm"><img alt="EmployeeCare Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UCsON4kT5wdGI0Ld9VBC_y16Cm4CaIPIdB0msuzZKdJ0bpj9Y9n9y6K5f8IVO2LobgEnxFv3dmIQ16IUwi9kOd3J3ORs-GZahbr_Rv1Wk-5Mp5E7ZvTN784LWtb5JpMZv5H61GZ3pIp04WvFr4E2B5xnmuZVhuyKTWracLUQk846uHWAqmzZ7a_OOm53flflMftr-9gVDn6NSpOGSq817QEndsG7wojRK2-mPVp9R6Osnh9R4DCbhd4w"/><div class="flex flex-col"><span class="font-title-lg text-title-lg text-primary tracking-tight leading-none">EmployeeCare</span><span class="font-mono-badge text-mono-badge text-secondary uppercase">Console Médiation</span></div></div><div class="px-space-md"><div class="px-space-md py-space-xs mb-space-sm"><span class="font-mono-badge text-mono-badge text-on-surface-variant uppercase tracking-wider">Supervision &amp; Dossiers</span></div><nav class="flex flex-col gap-space-xs" data-active-classes="bg-primary-container text-on-primary font-title-md rounded-lg"><a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-sm transition-colors bg-primary-container text-on-primary font-title-md rounded-lg" data-path="vue-responsable" href="#"><span class="material-symbols-outlined text-lg">dashboard</span><span>Tableau de Bord</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="registre-des-signalements" href="#"><span class="material-symbols-outlined text-lg">shield_person</span><span>Registre &amp; Triage</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="analyse-climat-social" href="#"><span class="material-symbols-outlined text-lg">insights</span><span>Climat Social &amp; Alertes</span></a><a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="registre-audit-conformite" href="#"><span class="material-symbols-outlined text-lg">history_edu</span><span>Journal d'Audit &amp; RGPD</span></a></nav></div></div><div class="px-space-lg flex flex-col gap-space-md"><div class="p-space-md rounded-lg bg-surface-container-low flex items-center gap-space-sm"><span class="material-symbols-outlined text-secondary text-xl">security</span><div class="flex flex-col"><span class="font-title-md text-title-md leading-tight text-on-surface">Session Sécurisée</span><span class="font-mono-badge text-mono-badge text-on-surface-variant">Niveau 3 — Habilité RH/DSI</span></div></div><a class="flex items-center justify-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container text-primary font-title-md text-title-md hover:bg-surface-container-high transition-colors" data-path="accueil-et-mes-demarches" href="#"><span class="material-symbols-outlined text-base">swap_horiz</span><span>Retour Vue Salarié</span></a></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-20 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-sm"><span class="font-mono-badge text-mono-badge px-space-sm py-space-xs rounded-lg bg-secondary-fixed text-on-secondary-fixed font-semibold">Canal Chiffré</span><span class="font-body-sm text-body-sm text-on-surface-variant">Collège Référent Indépendant</span></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-space-xs rounded-lg bg-surface-container-low text-secondary"><span class="material-symbols-outlined text-base">encrypted</span><span class="font-mono-badge text-mono-badge">Protection Certifiée</span></div><div class="h-8 w-px bg-outline-variant"></div><div class="flex items-center gap-space-sm"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCFQyXp8Z-eKRQF9qv2FjvZzrk2SEa-3NbcvswNl08d40CLFeedJQ_o0etWs56RSkJjP0UZP5SmUkw30z9ojow4VF2noBVUf2yZSLvJkVcT-oyLIy-Gs0AwC4VFH6zFFnFuWVP3LdG0xjK2G1JI_BoS1yXlFD7918fNMuV2PLfiwqIQTqpzAwHtglDi__w-I5UrQzb7DEh9aPgfY5OqGJ2zhs9Z_vP_TSoi1lFxv5pB-hFCw2wCJH_"/><div class="flex flex-col text-left"><span class="font-title-md text-title-md text-on-surface leading-tight">Paul Martin</span><span class="font-body-sm text-body-sm text-on-surface-variant leading-none">Délégué Concertation</span></div></div></div></header><main class="relative pt-20 bg-surface min-h-screen px-gutter-lg py-gutter"><div class="flex flex-col w-full gap-space-lg">
+<!-- Operational Header & Ambient Scope -->
+<section class="flex flex-col gap-space-md">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-sm">
+<span class="font-mono-badge text-mono-badge px-space-sm py-0.5 rounded-lg bg-surface-container text-on-surface-variant uppercase tracking-wider">Unité Opérationnelle</span>
+<span class="text-on-surface-variant font-mono-badge text-mono-badge">REF-IT-DIR-402</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-body-sm text-body-sm text-secondary font-medium">Flux d'incidents synchronisé</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">
+          Espace Responsable — Pôle Informatique &amp; Infrastructure
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Supervision continue sous protocole de confidentialité renforcé. Gestion des incidents et requêtes poste de travail.
+        </p>
+</div>
+<!-- Quick Action / Export Audit -->
+<div class="flex items-center gap-space-sm self-start lg:self-auto">
+<button class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-surface-container-lowest shadow-sm text-on-surface hover:bg-surface-container transition-all" type="button">
+<span class="material-symbols-outlined text-base text-on-surface-variant">tune</span>
+<span class="font-title-md text-title-md">Vues d'astreinte</span>
+</button>
+<button class="flex items-center gap-space-xs px-space-md py-space-sm rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-base">add_moderator</span>
+<span class="font-title-md text-title-md">Nouveau Ticket Manuel</span>
+</button>
+</div>
+</div>
+<!-- Editorial Key Performance Indicators (Dense, Non-ornamental) -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-space-sm">
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dossiers actifs</span>
+<span class="material-symbols-outlined text-base text-primary-container">dns</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-primary font-semibold">8</span>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">flux IT</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary mt-space-xs">Capacité pôle sous contrôle (74%)</span>
+</div>
+<div class="p-space-md rounded-xl bg-error-container/40 shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-3 -top-3 w-14 h-14 bg-error/10 rounded-full blur-md pointer-events-none"></div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-error-container font-semibold">Alerte SLA critique</span>
+<span class="material-symbols-outlined text-base text-error">priority_high</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-error font-bold">1</span>
+<span class="font-mono-badge text-mono-badge text-on-error-container">dépassement imminent</span>
+</div>
+<span class="font-body-sm text-body-sm text-error font-medium mt-space-xs">Switch central (Étage 3)</span>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Temps moyen de résolution</span>
+<span class="material-symbols-outlined text-base text-on-surface-variant">timelapse</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-primary">3.4</span>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">heures</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary mt-space-xs">-18% vs moyenne trimestrielle</span>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Satisfaction collaborateurs</span>
+<span class="material-symbols-outlined text-base text-secondary">verified_user</span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-primary font-semibold">98%</span>
+<span class="font-mono-badge text-mono-badge text-secondary font-medium">ISO-27001</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">Sur 54 retours post-clôture</span>
+</div>
+</div>
+<!-- Search & Fast Frictionless Filter Bar -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-sm">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-on-surface-variant text-base">search</span>
+<input class="w-full pl-10 pr-12 py-space-xs text-body-md font-body-md text-on-surface bg-surface-container-low rounded-lg focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant" id="ticket-search" placeholder="Filtrer par collaborateur, référence #EC, équipement..." type="text"/>
+<kbd class="hidden md:flex absolute right-space-sm top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-surface-container font-mono-badge text-mono-badge text-on-surface-variant">⌘ /</kbd>
+</div>
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0" id="filter-container">
+<button class="px-space-md py-space-xs rounded-lg text-title-md font-title-md bg-primary-container text-on-primary transition-all whitespace-nowrap flex items-center gap-space-xs">
+<span>Tous</span>
+<span class="font-mono-badge text-mono-badge px-1 rounded bg-surface-container-lowest/20">8</span>
+</button>
+<button class="px-space-md py-space-xs rounded-lg text-title-md font-title-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all whitespace-nowrap flex items-center gap-space-xs">
+<span>Non assignés</span>
+<span class="font-mono-badge text-mono-badge px-1 rounded bg-surface-container-highest text-on-surface">2</span>
+</button>
+<button class="px-space-md py-space-xs rounded-lg text-title-md font-title-md text-error hover:bg-error-container/40 transition-all whitespace-nowrap flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>Prioritaires / Urgents</span>
+<span class="font-mono-badge text-mono-badge px-1 rounded bg-error-container text-on-error-container font-semibold">1</span>
+</button>
+<button class="px-space-md py-space-xs rounded-lg text-title-md font-title-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all whitespace-nowrap flex items-center gap-space-xs">
+<span>En attente de retour</span>
+<span class="font-mono-badge text-mono-badge px-1 rounded bg-surface-container text-on-surface-variant">3</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Master-Detail Work Surface (45% / 55%) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Column: Master Triage List (5/12 approx 42-45%) -->
+<div class="lg:col-span-5 flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-space-xs">
+<span class="font-mono-badge text-mono-badge text-on-surface-variant uppercase tracking-wider">File de triage du pôle (4 prioritaires affichés)</span>
+<button class="font-body-sm text-body-sm text-primary flex items-center gap-space-xs hover:underline">
+<span class="material-symbols-outlined text-sm">swap_vert</span>
+<span>Par urgence SLA</span>
+</button>
+</div>
+<!-- Ticket Card 1: Urgent Outage -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-md flex flex-col gap-space-sm relative transition-all hover:bg-surface-container-low cursor-pointer ring-2 ring-error">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-mono-code text-mono-code font-bold text-error">#EC-2024-0902</span>
+<span class="font-mono-badge text-mono-badge px-space-xs py-0.5 rounded bg-error-container text-on-error-container font-semibold uppercase">Critique • SLA 45m</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">Il y a 22 min</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface leading-snug">
+            Panne du switch réseau principal étage 3 (Impact 45 collaborateurs)
+          </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+            Perte totale d'accès aux serveurs de fichiers locaux et passerelle VoIP. Équipes Facturation et Logistique immobilisées.
+          </p>
+</div>
+<div class="pt-space-xs flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">Statut : Non assigné</span>
+</div>
+<button class="px-space-sm py-1 rounded bg-error text-on-error font-title-md text-title-md hover:bg-error/90 transition-colors shadow-sm flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span>Prendre en charge</span>
+</button>
+</div>
+</div>
+<!-- Ticket Card 2: ACTIVE Selected Ticket (Paul Martin) -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-md flex flex-col gap-space-sm relative transition-all ring-2 ring-primary-container bg-gradient-to-r from-surface-container-low/50 to-surface-container-lowest cursor-pointer">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-mono-code text-mono-code font-bold text-primary">#EC-2024-0891</span>
+<span class="font-mono-badge text-mono-badge px-space-xs py-0.5 rounded bg-surface-container text-primary font-semibold uppercase">Diagnostic en cours</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">Depuis 2h</span>
+</div>
+<div>
+<div class="flex items-center justify-between">
+<h2 class="font-title-md text-title-md text-primary font-bold leading-snug">
+              Connexion instable et déconnexions (Compta Bureau 204)
+            </h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+            Coupures répétées lors des transferts de bilans sous SAP. Câble RJ45 vérifié localement, suspicion de prise murale dégradée.
+          </p>
+</div>
+<div class="flex items-center justify-between pt-space-xs text-on-surface-variant">
+<div class="flex items-center gap-space-xs">
+<img alt="Paul Martin" class="w-5 h-5 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCFQyXp8Z-eKRQF9qv2FjvZzrk2SEa-3NbcvswNl08d40CLFeedJQ_o0etWs56RSkJjP0UZP5SmUkw30z9ojow4VF2noBVUf2yZSLvJkVcT-oyLIy-Gs0AwC4VFH6zFFnFuWVP3LdG0xjK2G1JI_BoS1yXlFD7918fNMuV2PLfiwqIQTqpzAwHtglDi__w-I5UrQzb7DEh9aPgfY5OqGJ2zhs9Z_vP_TSoi1lFxv5pB-hFCw2wCJH_"/>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Paul Martin</span>
+<span class="text-on-surface-variant text-xs">• Bât B</span>
+</div>
+<span class="font-mono-badge text-mono-badge text-secondary font-medium">Sophie Dubois (Vous)</span>
+</div>
+</div>
+<!-- Ticket Card 3: Julie V. VPN Access -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm relative transition-all hover:bg-surface-container-low cursor-pointer">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-mono-code text-mono-code font-bold text-on-surface-variant">#EC-2024-0888</span>
+<span class="font-mono-badge text-mono-badge px-space-xs py-0.5 rounded bg-surface-container-highest text-on-surface-variant uppercase font-medium">En attente validation</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">Il y a 3h</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface leading-snug">
+            Demande d'accès VPN sécurisé pour mission audit
+          </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+            Déplacement sur site client à Bruxelles. Validation du protocole d'authentification multifacteur FIDO2 requise.
+          </p>
+</div>
+<div class="flex items-center justify-between pt-space-xs text-on-surface-variant">
+<div class="flex items-center gap-space-xs">
+<div class="w-5 h-5 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-mono-badge text-mono-badge">JV</div>
+<span class="font-body-sm text-body-sm text-on-surface">Julie V. (Audit Interne)</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Assigné à Marc L.</span>
+</div>
+</div>
+<!-- Ticket Card 4: Meeting Room Monitor -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm relative transition-all hover:bg-surface-container-low cursor-pointer">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-mono-code text-mono-code font-bold text-on-surface-variant">#EC-2024-0870</span>
+<span class="font-mono-badge text-mono-badge px-space-xs py-0.5 rounded bg-surface-container text-on-surface-variant uppercase">Priorité Basse</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">Hier, 16:40</span>
+</div>
+<div>
+<h2 class="font-title-md text-title-md text-on-surface leading-snug">
+            Écran externe défaillant salle de réunion B
+          </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-2">
+            Scintillement vert intermittent en connexion HDMI / USB-C. Câble de remplacement déjà testé.
+          </p>
+</div>
+<div class="flex items-center justify-between pt-space-xs text-on-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Signalement anonymisé salle</span>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">Non assigné</span>
+</div>
+</div>
+<!-- Quick Archive link -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between text-on-surface-variant">
+<span class="font-body-sm text-body-sm">4 autres signalements archivés ou résolus cette semaine</span>
+<button class="font-title-md text-title-md text-primary hover:underline">Consulter</button>
+</div>
+</div>
+<!-- Right Column: Detail Workstation Panel (7/12 approx 55-58%) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<!-- Detailed Incident Record Card -->
+<div class="rounded-xl bg-surface-container-lowest shadow-md overflow-hidden flex flex-col">
+<!-- Header Strip with Metadata -->
+<div class="p-space-lg bg-surface-container-low flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-mono-code text-mono-code text-primary font-bold text-base px-2 py-0.5 rounded bg-surface-container-lowest shadow-sm">
+                #EC-2024-0891
+              </span>
+<span class="px-space-sm py-0.5 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-title-md text-title-md font-semibold">
+                EN COURS DE DIAGNOSTIC
+              </span>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">
+                Créé le 24 Oct. à 10:14
+              </span>
+</div>
+<!-- Priority & Protocol Tag -->
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-base">verified</span>
+<span class="font-mono-badge text-mono-badge text-secondary font-medium">SLA Standard (4h max)</span>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<h2 class="font-headline-md text-headline-md text-primary">
+              Connexion instable et déconnexions (Compta Bureau 204)
+            </h2>
+<div class="flex flex-wrap items-center gap-space-md pt-space-xs">
+<!-- Confidentiality Indicator Badge -->
+<div class="flex items-center gap-1.5 px-space-sm py-1 rounded-lg bg-surface-container-lowest shadow-sm text-on-surface">
+<span class="material-symbols-outlined text-sm text-secondary">person_check</span>
+<span class="font-body-sm text-body-sm font-medium">Signalement Nominatif</span>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">(Échanges directs autorisés)</span>
+</div>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Temps écoulé : 2h 18m</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-lg">
+<!-- Requester & Workstation Profile Box -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<img alt="Paul Martin portrait" class="w-12 h-12 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCFQyXp8Z-eKRQF9qv2FjvZzrk2SEa-3NbcvswNl08d40CLFeedJQ_o0etWs56RSkJjP0UZP5SmUkw30z9ojow4VF2noBVUf2yZSLvJkVcT-oyLIy-Gs0AwC4VFH6zFFnFuWVP3LdG0xjK2G1JI_BoS1yXlFD7918fNMuV2PLfiwqIQTqpzAwHtglDi__w-I5UrQzb7DEh9aPgfY5OqGJ2zhs9Z_vP_TSoi1lFxv5pB-hFCw2wCJH_"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-title-lg text-title-lg text-on-surface">Paul Martin</span>
+<span class="font-mono-badge text-mono-badge px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Poste 4412</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Direction Financière • Département Comptabilité Générale</span>
+<span class="font-body-sm text-body-sm text-primary font-medium">Bâtiment B — Bureau 204 (Prise Murale RJ-04)</span>
+</div>
+</div>
+<!-- Fast Contact Utility -->
+<div class="flex items-center gap-space-xs self-stretch md:self-auto justify-end">
+<button class="p-space-sm rounded-lg bg-surface-container-lowest text-primary hover:bg-surface-container transition-all shadow-sm flex items-center justify-center" title="Contacter par Teams interne">
+<span class="material-symbols-outlined text-base">forum</span>
+</button>
+<button class="p-space-sm rounded-lg bg-surface-container-lowest text-primary hover:bg-surface-container transition-all shadow-sm flex items-center justify-center" title="Historique des incidents de Paul">
+<span class="material-symbols-outlined text-base">manage_search</span>
+</button>
+</div>
+</div>
+<!-- Original Problem Statement -->
+<div class="flex flex-col gap-space-xs">
+<span class="font-mono-badge text-mono-badge text-on-surface-variant uppercase tracking-wider">Description fournie par le collaborateur</span>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm text-on-surface font-body-md text-body-md leading-relaxed">
+              « Depuis ce matin 09h30, j'ai des micro-coupures réseau toutes les 5 à 10 minutes. C'est particulièrement bloquant car nous finalisons les clôtures fournisseurs sous l'ERP SAP, et chaque saut de ligne corrompt ma session de saisie de lots de factures. J'ai déjà changé mon cordon réseau RJ45 par un neuf pris au placard réserve, mais le voyant link orange continue de clignoter de manière anormale. Merci pour votre aide rapide. »
+            </div>
+</div>
+<!-- Technical Diagnostic Visual / Infrastructure Context -->
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-mono-badge text-mono-badge text-on-surface-variant uppercase tracking-wider">Télémétrie Port &amp; Baie de brassage</span>
+<span class="font-mono-badge text-mono-badge text-secondary">Switch B2-SW-03 : En ligne</span>
+</div>
+<div class="grid grid-cols-3 gap-space-sm text-center">
+<div class="p-space-xs rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">Atténuation dB</span>
+<span class="font-title-md text-title-md text-error">-14.2 dB (Anomalie)</span>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">Paquets perdus</span>
+<span class="font-title-md text-title-md text-error">8.6%</span>
+</div>
+<div class="p-space-xs rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">Débit négocié</span>
+<span class="font-title-md text-title-md text-on-surface">100 Mbps (au lieu de 1 Gbps)</span>
+</div>
+</div>
+</div>
+<!-- Activity Timeline & Audit Log -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-mono-badge text-mono-badge text-on-surface-variant uppercase tracking-wider">Journal d'intervention &amp; Traçabilité</span>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant">Horodatage sécurisé SHA-256</span>
+</div>
+<div class="relative pl-6 space-y-space-md before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-container-highest">
+<!-- Timeline item 1 -->
+<div class="relative flex flex-col gap-0.5">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-on-surface-variant"></div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-code text-mono-code text-on-surface-variant">10:14</span>
+<span class="font-title-md text-title-md text-on-surface">Signalement reçu et certifié</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Enregistrement sur portail EmployeeCare, attribution automatique au collège Pôle IT.
+                </p>
+</div>
+<!-- Timeline item 2 -->
+<div class="relative flex flex-col gap-0.5">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-secondary"></div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-code text-mono-code text-secondary font-medium">10:30</span>
+<span class="font-title-md text-title-md text-on-surface">Pris en charge par Sophie Dubois</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Attribution de la responsabilité opérationnelle. Évaluation de la priorité : Normale.
+                </p>
+</div>
+<!-- Timeline item 3 -->
+<div class="relative flex flex-col gap-0.5">
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-primary-container"></div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-code text-mono-code text-primary font-medium">11:05</span>
+<span class="font-title-md text-title-md text-primary font-semibold">Message envoyé à Paul Martin</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low text-body-sm text-body-sm text-on-surface mt-1">
+                  « Bonjour Paul, nous constatons une instabilité de signal physique sur la prise RJ-04. Un technicien va passer tester le panneau de brassage de l'étage pour exclure un défaut de sertissage. »
+                </div>
+</div>
+</div>
+</div>
+<!-- Operational Response & Action Area -->
+<div class="pt-space-md flex flex-col gap-space-md">
+<!-- Message & Note Tabs -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs bg-surface-container-low p-1 rounded-lg">
+<button class="px-space-md py-1 rounded text-title-md font-title-md bg-surface-container-lowest text-primary shadow-sm" id="tab-direct-msg">
+                    Message direct à Paul
+                  </button>
+<button class="px-space-md py-1 rounded text-title-md font-title-md text-on-surface-variant hover:text-on-surface" id="tab-internal-note">
+                    Note interne confidentielle (DSI)
+                  </button>
+</div>
+<span class="font-mono-badge text-mono-badge text-on-surface-variant hidden sm:inline">Cryptage E2E activé</span>
+</div>
+<div class="relative">
+<textarea class="w-full p-space-md bg-surface-container-lowest rounded-xl shadow-sm text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant resize-none" placeholder="Rédiger une réponse ou consigner des éléments techniques pour le technicien..." rows="3"></textarea>
+<div class="absolute bottom-2.5 right-2.5 flex items-center gap-space-xs">
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface" title="Joindre un rapport de ping" type="button">
+<span class="material-symbols-outlined text-base">attach_file</span>
+</button>
+<button class="px-space-md py-1 rounded bg-primary-container text-on-primary font-title-md text-title-md hover:bg-primary transition-all flex items-center gap-1 shadow-sm" type="button">
+<span class="material-symbols-outlined text-sm">send</span>
+<span>Envoyer</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Fast Status Update Button Suite -->
+<div class="p-space-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-base text-primary">fast_forward</span>
+<span class="font-title-md text-title-md text-on-surface">Actions de progression :</span>
+</div>
+<div class="flex flex-wrap items-center gap-space-xs">
+<button class="flex-1 sm:flex-none px-space-md py-space-xs rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-title-md text-title-md shadow-sm transition-all flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-base text-secondary">handyman</span>
+<span>Planifier technicien</span>
+</button>
+<button class="flex-1 sm:flex-none px-space-md py-space-xs rounded-lg bg-surface-container-lowest hover:bg-surface-container text-on-surface font-title-md text-title-md shadow-sm transition-all flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-base text-on-surface-variant">help_outline</span>
+<span>Demander précision</span>
+</button>
+<button class="flex-1 sm:flex-none px-space-md py-space-xs rounded-lg bg-secondary text-on-secondary font-title-md text-title-md hover:bg-secondary/90 shadow-sm transition-all flex items-center justify-center gap-1" type="button">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span>Marquer comme résolu</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Operational & Audit Compliance Foot-Panel -->
+<footer class="mt-space-md p-space-md rounded-xl bg-surface-container-low flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">policy</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Registre de consignation &amp; conformité RGPD/CNIL</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Toutes les actions prises dans cette console sont journalisées et opposables en comité paritaire.</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md self-end md:self-auto">
+<div class="flex items-center gap-1.5 font-mono-badge text-mono-badge text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Audit Trail Hash ID: #8F9A-24D1-IT</span>
+</div>
+<button class="px-space-md py-1 rounded bg-surface-container text-on-surface font-title-md text-title-md hover:bg-surface-container-highest transition-colors">
+        Exporter le registre (PDF scellé)
+      </button>
+</div>
+</footer>
+</div>
+<script>
+  // Simple tab toggle for fast note switching
+  const directTab = document.getElementById('tab-direct-msg');
+  const noteTab = document.getElementById('tab-internal-note');
+
+  if (directTab && noteTab) {
+    directTab.addEventListener('click', () => {
+      directTab.className = "px-space-md py-1 rounded text-title-md font-title-md bg-surface-container-lowest text-primary shadow-sm";
+      noteTab.className = "px-space-md py-1 rounded text-title-md font-title-md text-on-surface-variant hover:text-on-surface";
+    });
+
+    noteTab.addEventListener('click', () => {
+      noteTab.className = "px-space-md py-1 rounded text-title-md font-title-md bg-surface-container-lowest text-primary shadow-sm";
+      directTab.className = "px-space-md py-1 rounded text-title-md font-title-md text-on-surface-variant hover:text-on-surface";
+    });
+  }
+
+  // Quick keyboard shortcut [ / ] focus
+  window.addEventListener('keydown', (e) => {
+    if (e.key === '/' && (e.metaKey || e.ctrlKey)) {
+      const searchInput = document.getElementById('ticket-search');
+      if (searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    }
+  });
+</script></main></div></body></html>
