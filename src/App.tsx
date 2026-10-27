@@ -901,26 +901,33 @@ export default function App() {
             reference: payload.id,
             title: payload.title,
             description: payload.description,
-            category: (payload.category as Ticket['category']) || 'Conditions de travail',
-            priority: payload.confidentiality === 'confidentiel' ? 'HAUTE' : 'MOYENNE',
-            status: 'NOUVEAU',
+            category: (payload.category as Ticket['category']) || 'Conditions de Travail',
+            priority: payload.confidentiality === 'confidentiel' ? 'ELEVEE' : 'MOYENNE',
+            status: 'EN_ATTENTE',
+            confidentiality:
+              payload.confidentiality === 'anonyme'
+                ? 'ANONYME'
+                : payload.confidentiality === 'confidentiel'
+                  ? 'CONFIDENTIEL'
+                  : 'NOMINATIF',
+            slaInfo: '48h00',
             requesterName:
               payload.confidentiality === 'anonyme'
                 ? 'Collaborateur anonyme'
                 : authSession.fullName,
             requesterRole: authSession.roleLabel || 'Collaborateur',
             requesterDepartment: authSession.departmentName || 'Opérations',
-            requesterEmail:
-              payload.confidentiality === 'anonyme' ? 'anonyme@entreprise.com' : authSession.email,
+            requesterLocation: 'Siège',
             requesterPhone: 'Interne',
-            location: 'Siège',
-            targetDepartment: authSession.departmentName || 'Ressources Humaines & QVT',
-            assignedTo: null,
+            isAnonymous: payload.confidentiality === 'anonyme',
+            targetDepartment: authSession.departmentName || 'Direction des Ressources Humaines',
+            assignedTo: undefined,
             createdAt: now.toISOString(),
+            createdTimeAgo: "À l'instant",
+            timeElapsed: '0m',
             updatedAt: now.toISOString(),
-            slaDeadline: '48h00',
-            isConfidential: payload.confidentiality !== 'ordinaire',
             messages: [],
+            attachments: [],
             timeline: [
               {
                 id: `tl-${Date.now()}`,
@@ -933,7 +940,7 @@ export default function App() {
                     ? 'Collaborateur anonyme'
                     : authSession.fullName,
                 type: 'creation',
-                newStatus: 'NOUVEAU',
+                newStatus: 'EN_ATTENTE',
               },
             ],
           };
